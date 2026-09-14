@@ -1,0 +1,14 @@
+{
+  "name": "reprosift",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Evidence-backed UI bug reproduction and verification",
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.6"
+  }
+}

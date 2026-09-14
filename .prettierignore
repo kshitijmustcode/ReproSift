@@ -1,0 +1,23 @@
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+coverage/
+artifacts/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+.env
+.env.*
+
+# Python environments and generated caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+uv.lock
+*.py

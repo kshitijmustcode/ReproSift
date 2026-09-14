@@ -1,0 +1,22 @@
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+coverage/
+artifacts/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Python environments and generated caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
