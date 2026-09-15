@@ -37,7 +37,8 @@ Step 11 introduces the documented sample cart and buggy/corrected behavior. Keep
 ```sh
 pnpm build:store
 pnpm typecheck:store
-pnpm format:check
+pnpm lint:js
+pnpm test:js
 ```
 
-Browser checks cover catalog → product → cart → checkout navigation, both product details, disabled actions, unknown-product handling and mobile layouts. ESLint and automated test infrastructure remain Step 6.
+Browser checks cover catalog → product → cart → checkout navigation, both product details, disabled actions, unknown-product handling and mobile layouts. `catalog.test.ts` protects the authored product IDs, integer-cent prices, lookup behavior and currency formatting.

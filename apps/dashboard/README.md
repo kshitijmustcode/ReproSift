@@ -23,4 +23,4 @@ Dynamic routes currently accept only `sample-coupon`; unknown IDs show the not-f
 
 ## Current limits
 
-No API, database, MCP or model calls are connected. Drafts are not persisted. Investigation submission and exports are disabled. The preview does not claim a reproduced or verified defect. ESLint and automated test infrastructure are scheduled for Step 6.
+No API, database, MCP or model calls are connected. Drafts are not persisted. Investigation submission and exports are disabled. The preview does not claim a reproduced or verified defect. Root ESLint, typecheck and Vitest commands cover this app; `sample-case.test.ts` protects its authored preview links and expected result.

@@ -24,9 +24,10 @@ Select Node using nvm use, then run:
 ```sh
 pnpm install --frozen-lockfile
 pnpm list -r --depth -1
-pnpm format:check
+uv sync --project services/backend --locked
+pnpm check
 ```
 
-packageManager pins pnpm; .nvmrc and .python-version pin runtimes. .npmrc enforces declared engines and saves new npm dependencies as exact versions. Internal dependencies should use workspace:* when introduced. Avoid adding fake scripts that return success for nonexistent apps or tests.
+packageManager pins pnpm; .nvmrc and .python-version pin runtimes. .npmrc enforces declared engines and saves new npm dependencies as exact versions. Internal dependencies should use workspace:* when introduced. The root ESLint config covers both Next.js apps and supplies both app roots to the Next.js plugin. Vitest discovers focused tests under `apps/**`; Python checks use the backend working directory. The optional `unrs-resolver` downloader is blocked because pnpm installs the platform binding package directly.
 
 Step 5 adds the independent uv-managed Python package with FastAPI health, validated process settings and Ruff/mypy/pytest checks. From the root run `uv sync --project services/backend --locked`, then `uv run --project services/backend --locked reprosift-api`. See [backend setup](../services/backend/README.md). No separate uv workspace is needed for one package. The agent, worker and persistence remain future implementation.

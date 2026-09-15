@@ -5,8 +5,22 @@
   "description": "Evidence-backed UI bug reproduction and verification",
   "packageManager": "pnpm@11.19.0",
   "scripts": {
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "pnpm format:js && pnpm format:python",
+    "format:js": "prettier --write .",
+    "format:python": "uv run --directory services/backend --locked ruff format",
+    "format:check": "pnpm format:js:check && pnpm format:python:check",
+    "format:js:check": "prettier --check .",
+    "format:python:check": "uv run --directory services/backend --locked ruff format --check",
+    "lint": "pnpm lint:js && pnpm lint:python",
+    "lint:js": "eslint . --max-warnings 0",
+    "lint:python": "uv run --directory services/backend --locked ruff check",
+    "typecheck": "pnpm typecheck:js && pnpm typecheck:python",
+    "typecheck:js": "pnpm typecheck:dashboard && pnpm typecheck:store",
+    "typecheck:python": "uv run --directory services/backend --locked mypy",
+    "test": "pnpm test:js && pnpm test:python",
+    "test:js": "vitest run",
+    "test:python": "uv run --directory services/backend --locked pytest",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "dev:dashboard": "pnpm --filter @reprosift/dashboard dev",
     "build:dashboard": "pnpm --filter @reprosift/dashboard build",
     "typecheck:dashboard": "pnpm --filter @reprosift/dashboard typecheck",
@@ -15,7 +29,11 @@
     "typecheck:store": "pnpm --filter @reprosift/demo-store typecheck"
   },
   "devDependencies": {
-    "prettier": "3.9.6"
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.5",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.6",
+    "vitest": "5.0.0"
   },
   "engines": {
     "node": ">=24.21.0 <25",

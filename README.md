@@ -100,7 +100,7 @@ The user selected a Python + TypeScript architecture. TypeScript remains the typ
 | Hosted dispatch            | Managed job/task adapter when needed                 | Avoid always-on Redis costs; select one deployed dispatch backend             |
 | Artifacts                  | Local disk, then object storage                      | TypeScript produces evidence; Python controls metadata/access                 |
 | Python tooling             | uv + Ruff + mypy + pytest                            | Locked dependencies, formatting/linting, type checks and behavior tests       |
-| JavaScript tooling         | pnpm + Prettier + TypeScript + Vitest                | Existing formatting setup retained; other tools added during scaffolding      |
+| JavaScript tooling         | pnpm + Prettier + ESLint + TypeScript + Vitest       | One root command validates both applications                                  |
 | Local infrastructure       | Docker Compose                                       | Reproducible API, worker, MCP browser service, database and optional queue    |
 
 Prettier and both Next.js applications (React, TypeScript, Tailwind CSS and Lucide icons) are installed. Both apps use the same pinned framework versions and root lockfile. The Python package includes FastAPI, Pydantic Settings, Uvicorn and Ruff/mypy/pytest checks, with its own uv.lock. Agent, database and MCP dependencies remain planned.
@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–5 are complete. Next: Step 6, repository development checks; Python checks are already configured.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–6 are complete. Next: Step 7, create the TypeScript MCP server and its first status tool.
 
 Read these before implementing the relevant feature:
 
@@ -341,23 +341,23 @@ Read these before implementing the relevant feature:
 
 Executable schemas and fixtures will become the source of truth when implemented. These documents must then link to them and explain semantics. Never include harness answer labels in the agent's retrieval corpus.
 
-### Formatting
+### Development checks
 
-Prettier is a pinned local development dependency. Use the package-manager version in package.json and the committed lockfile:
+Install both locked environments, then run every formatting, lint, type and behavior check from the repository root:
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm format
-pnpm format:check
+uv sync --project services/backend --locked
+pnpm check
 ```
 
-Prettier formats JavaScript/TypeScript and supported documentation/configuration; it does not format Python. Python will use Ruff formatting/linting and mypy. Prettier handles formatting, not linting, typing or correctness. Those checks will be added with application scaffolding. .prettierignore excludes dependencies, generated output, artifacts and environment files; .env.example remains tracked through .gitignore. No editor extension is required for these commands.
+`pnpm check` runs Prettier and Ruff format verification, ESLint with Next.js Core Web Vitals and TypeScript rules, Ruff lint, strict TypeScript and mypy checks, Vitest, and pytest. Use `pnpm format` to format both language stacks. Focused root commands are `pnpm format:check`, `pnpm lint`, `pnpm typecheck` and `pnpm test`; language-specific variants use `:js` and `:python` suffixes. Generated output, dependencies and environment files stay excluded. ESLint and Prettier are configured to avoid competing formatting rules.
 
 ## Next-session starting instructions
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The dashboard and demo store each have four runnable page shells; the three library packages remain placeholders. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health. See [backend setup and checks](services/backend/README.md) for configuration and Python commands. Build/typecheck commands are `pnpm build:dashboard`, `pnpm typecheck:dashboard`, `pnpm build:store` and `pnpm typecheck:store`. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 6, repository development checks. Later steps connect the dashboard to the API and MCP.
+The dashboard and demo store each have four runnable page shells; the three library packages remain placeholders. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health. See [backend setup and checks](services/backend/README.md) for configuration and Python commands. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 7, create the TypeScript MCP server. Later steps connect the dashboard to the API and MCP.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 

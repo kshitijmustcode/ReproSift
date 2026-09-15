@@ -4,9 +4,9 @@ Last updated: 2026-09-15.
 
 ## Current status
 
-Steps 1–5 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. Python formatting, linting, typing and tests are configured. Steps 6–34 remain pending.
+Steps 1–6 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. One root command checks both language stacks. Steps 7–34 remain pending.
 
-**Next action: Step 6 — configure development checks.** Reuse the existing backend Ruff/mypy/pytest setup; add the remaining TypeScript and repository checks. See [prerequisite audit](prerequisites.md) for startup instructions. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 7 — create the MCP server.** See [prerequisite audit](prerequisites.md) for startup instructions. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -44,7 +44,8 @@ Steps 1–5 are complete. Dashboard and demo-store page shells and the API healt
   - Work: Initialize a uv-managed Python package with FastAPI, validated configuration and a health endpoint.
   - Completion check: Backend starts; valid and invalid configuration behave correctly.
 
-- [ ] **Step 6. Configure development checks**
+- [x] **Step 6. Configure development checks**
+  - Status: complete. Root ESLint/Vitest and aggregate commands cover both Next.js apps; Ruff, mypy and pytest cover the Python package.
   - Work: Add TypeScript checks, ESLint, Ruff, mypy, pytest and basic test configuration. Retain Prettier.
   - Completion check: Formatting, linting, type checks and starter tests pass.
 
@@ -187,3 +188,5 @@ For completed steps, record actual checks and results. Keep limitations explicit
 - 2026-09-15 — Step 3 complete: Next.js, strict TypeScript and Tailwind dashboard with all four routes. Production build and typecheck passed. Browser checks covered navigation, sample/clear draft actions, evidence/requirements toggles, result preview, mobile layout and unknown IDs. Preview data is presentation-only; submission and exports are disabled until implementation. Steps 1–2 were committed as 484bfb8; Step 3 remains local. Next: Step 4, separate demo-store scaffold. ESLint and test infrastructure remain Step 6.
 
 - 2026-09-15 — Step 3 committed as 978d200. Step 4 complete: separate Next.js demo store on 127.0.0.1:3001 with catalog, dynamic product, cart and checkout shells. Reused the dashboard's pinned framework versions and root lockfile. Production build and strict typecheck passed. Browser checks covered both products, catalog → product → cart → checkout navigation, disabled actions, unknown-product recovery and mobile layouts; dashboard still serves on port 3000. No console errors observed on normal store routes. Cart mutations, coupon logic, attempt reset and variants remain Step 11; ESLint/test infrastructure remains Step 6. Step 4 changes are uncommitted. Next: Step 5, uv-managed FastAPI backend with validated configuration and health endpoint.
+
+- 2026-09-15 — Step 5 committed as 5b7ce71. Step 6 complete: pinned ESLint 9.39.5 (the newest release compatible with the Next.js 16.3.5 plugin peer ranges), eslint-config-next, eslint-config-prettier and Vitest 5. Root `pnpm check` verifies Prettier/Ruff formatting, JavaScript/Python lint, both app typechecks, strict mypy and both test suites. Five Vitest assertions protect sample links/expectations and catalog identity/pricing/formatting; 11 backend tests remain green. pnpm reports no peer issues and frozen install works with an explicit blocked optional resolver downloader. Existing two upstream Starlette deprecation warnings remain documented. Step 6 changes are uncommitted. Next: Step 7, TypeScript MCP server with validated status tool.
