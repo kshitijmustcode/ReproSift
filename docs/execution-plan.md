@@ -4,9 +4,9 @@ Last updated: 2026-09-15.
 
 ## Current status
 
-Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1–3 are complete. The dashboard runs locally; Steps 4–34 remain pending.
+Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1–4 are complete. Dashboard and demo-store page shells run locally on separate ports; Steps 5–34 remain pending.
 
-**Next action: Step 4 — create the demo store.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 5 — create the Python backend.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -35,7 +35,7 @@ Planning documents, coding standards and pinned Prettier tooling are complete. W
   - Work: Scaffold Next.js with TypeScript, Tailwind and the four product page shells.
   - Completion check: Dashboard opens locally and navigation works.
 
-- [ ] **Step 4. Create the demo store**
+- [x] **Step 4. Create the demo store**
   - Work: Scaffold a separate Next.js application with catalog, product, cart and checkout routes.
   - Completion check: Store opens independently of the dashboard.
 
@@ -182,3 +182,5 @@ For completed steps, record actual checks and results. Keep limitations explicit
 - 2026-09-15 — Step 2 complete: added pnpm-workspace.yaml, engine/exact-version policy and private manifests for dashboard, demo-store, mcp-server, browser-runner and contracts-ts. Added Python/backend and supporting directory ownership notes. Verified six-project discovery, offline frozen-lockfile installation and ignore rules. Next: Step 3 dashboard. Changes are local until separately committed/pushed.
 
 - 2026-09-15 — Step 3 complete: Next.js, strict TypeScript and Tailwind dashboard with all four routes. Production build and typecheck passed. Browser checks covered navigation, sample/clear draft actions, evidence/requirements toggles, result preview, mobile layout and unknown IDs. Preview data is presentation-only; submission and exports are disabled until implementation. Steps 1–2 were committed as 484bfb8; Step 3 remains local. Next: Step 4, separate demo-store scaffold. ESLint and test infrastructure remain Step 6.
+
+- 2026-09-15 — Step 3 committed as 978d200. Step 4 complete: separate Next.js demo store on 127.0.0.1:3001 with catalog, dynamic product, cart and checkout shells. Reused the dashboard's pinned framework versions and root lockfile. Production build and strict typecheck passed. Browser checks covered both products, catalog → product → cart → checkout navigation, disabled actions, unknown-product recovery and mobile layouts; dashboard still serves on port 3000. No console errors observed on normal store routes. Cart mutations, coupon logic, attempt reset and variants remain Step 11; ESLint/test infrastructure remains Step 6. Step 4 changes are uncommitted. Next: Step 5, uv-managed FastAPI backend with validated configuration and health endpoint.

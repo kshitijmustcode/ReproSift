@@ -9,7 +9,10 @@
     "format:check": "prettier --check .",
     "dev:dashboard": "pnpm --filter @reprosift/dashboard dev",
     "build:dashboard": "pnpm --filter @reprosift/dashboard build",
-    "typecheck:dashboard": "pnpm --filter @reprosift/dashboard typecheck"
+    "typecheck:dashboard": "pnpm --filter @reprosift/dashboard typecheck",
+    "dev:store": "pnpm --filter @reprosift/demo-store dev",
+    "build:store": "pnpm --filter @reprosift/demo-store build",
+    "typecheck:store": "pnpm --filter @reprosift/demo-store typecheck"
   },
   "devDependencies": {
     "prettier": "3.9.6"

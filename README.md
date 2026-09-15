@@ -4,9 +4,9 @@ AI-powered UI bug reproduction using Python, TypeScript and MCP. Turn bug report
 
 Repository: [kshitijmustcode/ReproSift](https://github.com/kshitijmustcode/ReproSift).
 
-> Project planning and continuity document. Documentation and formatting tooling are initialized; application implementation has not started.
+> Project planning and continuity document. Dashboard and demo-store page shells run locally; backend and investigation execution are still planned.
 
-Last updated: 2026-09-14
+Last updated: 2026-09-15
 
 ## Product goal
 
@@ -103,7 +103,7 @@ The user selected a Python + TypeScript architecture. TypeScript remains the typ
 | JavaScript tooling         | pnpm + Prettier + TypeScript + Vitest                | Existing formatting setup retained; other tools added during scaffolding      |
 | Local infrastructure       | Docker Compose                                       | Reproducible API, worker, MCP browser service, database and optional queue    |
 
-Prettier and the Next.js dashboard (React, TypeScript, Tailwind CSS and Lucide icons) are installed. Python dependencies and the remaining services are planned, not installed. Pin compatible stable releases and Python/Node runtimes during scaffolding.
+Prettier and both Next.js applications (React, TypeScript, Tailwind CSS and Lucide icons) are installed. Both apps use the same pinned framework versions and root lockfile. Python dependencies and the remaining services are planned, not installed. Pin compatible stable releases and Python/Node runtimes during scaffolding.
 
 FastMCP is unnecessary for this browser server because Playwright capabilities live in TypeScript. The Python orchestrator is an MCP client. Add a Python MCP server only if a distinct Python capability needs external exposure. Keep OpenAI as the initial provider; this language change does not require Claude or a computer-use API.
 
@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–3 (prerequisites, workspace and dashboard scaffold) are complete. Next: Step 4, scaffold the separate demo store.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–4 (prerequisites, workspace, dashboard and demo-store scaffolds) are complete. Next: Step 5, initialize the Python backend.
 
 Read these before implementing the relevant feature:
 
@@ -357,7 +357,7 @@ Prettier formats JavaScript/TypeScript and supported documentation/configuration
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The folder contains planning documents, runtime pins, Prettier tooling and five private JavaScript workspace packages. The dashboard has four runnable page shells; other packages remain placeholders. The Python backend location is reserved but not initialized. Run `pnpm dev:dashboard` and open http://127.0.0.1:3000. Use `pnpm build:dashboard` and `pnpm typecheck:dashboard` to check it. Sample previews do not execute or persist investigations. Next: Step 4, scaffold the separate demo store. Later steps establish the first browser vertical slice: submit report → start scoped browser through MCP → capture screenshot → show result.
+The folder contains planning documents, runtime pins, Prettier tooling and five private JavaScript workspace packages. The dashboard and demo store each have four runnable page shells; the three library packages remain placeholders. The Python backend location is reserved but not initialized. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and, in another terminal, `pnpm dev:store` for http://127.0.0.1:3001. Build/typecheck commands are `pnpm build:dashboard`, `pnpm typecheck:dashboard`, `pnpm build:store` and `pnpm typecheck:store`. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled until later implementation. Next: Step 5, initialize the Python backend. Later steps establish the first browser vertical slice: submit report → start scoped browser through MCP → capture screenshot → show result.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 
