@@ -4,9 +4,9 @@ Last updated: 2026-09-15.
 
 ## Current status
 
-Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1–4 are complete. Dashboard and demo-store page shells run locally on separate ports; Steps 5–34 remain pending.
+Steps 1–5 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. Python formatting, linting, typing and tests are configured. Steps 6–34 remain pending.
 
-**Next action: Step 5 — create the Python backend.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 6 — configure development checks.** Reuse the existing backend Ruff/mypy/pytest setup; add the remaining TypeScript and repository checks. See [prerequisite audit](prerequisites.md) for startup instructions. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -39,7 +39,8 @@ Planning documents, coding standards and pinned Prettier tooling are complete. W
   - Work: Scaffold a separate Next.js application with catalog, product, cart and checkout routes.
   - Completion check: Store opens independently of the dashboard.
 
-- [ ] **Step 5. Create the Python backend**
+- [x] **Step 5. Create the Python backend**
+  - Status: complete. Locked Python package, explicit dotenv loading, validated API settings, app factory and `/health`; Python checks introduced now per AGENTS.md.
   - Work: Initialize a uv-managed Python package with FastAPI, validated configuration and a health endpoint.
   - Completion check: Backend starts; valid and invalid configuration behave correctly.
 
@@ -170,6 +171,8 @@ Planning documents, coding standards and pinned Prettier tooling are complete. W
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-15 — Step 4 committed as 315b6fb. Step 5 complete: Python 3.13.15 package with pinned FastAPI/Pydantic Settings/Uvicorn and uv.lock. `uv run --locked reprosift-api` starts on 127.0.0.1:8000; real HTTP `/health` returns the documented liveness response. Ruff formatting/lint and strict mypy passed; 11 pytest cases passed covering health/OpenAPI, invalid configuration, dotenv precedence, production docs and CLI input redaction. Two upstream Starlette deprecation warnings remain (httpx test transport and AnyIO BlockingPortal alias); checks pass. Root `.env.example` distinguishes four consumed API settings from proposed future settings. No agent, MCP, persistence or worker is implemented. Step 5 changes are uncommitted. Next: Step 6, add remaining repository/TypeScript checks while preserving the Python checks.
 
 | Date       | Step     | Status   | Evidence / next action                                                                                        |
 | ---------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------- |

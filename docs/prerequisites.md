@@ -34,7 +34,7 @@ source "$HOME/.nvm/nvm.sh"
 nvm use
 ```
 
-The audited shell initially selected Node 20.15.0 and Apple's Python 3.9.6. Neither default was modified. Use nvm use for this repository and uv-managed environments for backend work. Avoid using the bare system python3 for the project. The Python backend will declare requires-python = ">=3.13,<3.14" when its pyproject.toml is created in Step 5; its uv.lock is not created yet.
+The audited shell initially selected Node 20.15.0 and Apple's Python 3.9.6. Neither default was modified. Use nvm use for this repository and uv-managed environments for backend work. Avoid using the bare system python3 for the project. The Python backend declares requires-python = ">=3.13,<3.14" and has a uv.lock, created in Step 5 using Python 3.13.15.
 
 The audit also verified pnpm through the Node 24 installation, so development does not depend on the Codex-provided fallback pnpm path.
 
@@ -51,4 +51,4 @@ Node 24 is an LTS line and exceeds Next.js's documented minimum Node 20.9. Pytho
 
 Completed on 2026-09-15 after this audit. Git, origin/main, ignore rules and runtime pins are present. The pnpm workspace now discovers five private JavaScript members plus root. Python and supporting directories have ownership notes. Offline frozen-lockfile installation and ignore rules were verified. See [workspace structure](workspace.md).
 
-Steps 3–4 dashboard and demo-store scaffolding are now complete; next action: Step 5 — initialize the Python backend. No application frameworks, API calls or deployment were introduced by Steps 1–2.
+Steps 3–5 dashboard, demo-store and API scaffolding are complete; next action: Step 6 — repository development checks. No application frameworks, API calls or deployment were introduced by Steps 1–2.

@@ -1,7 +1,54 @@
 # Python backend
 
-Reserved for the uv-managed Python package implemented in Step 5. Python owns FastAPI, the LangGraph worker, retrieval, persistence/migrations, verification policy and evaluation integrations.
+Step 5 implements the uv-managed FastAPI package, startup configuration and process health endpoint. Python will also own agent orchestration, retrieval, persistence, verification policy and evaluation.
 
-Use Python 3.13.15 from the root .python-version. Step 5 will create pyproject.toml, uv.lock and src/reprosift with API/worker entry points and tests. No Python package or dependencies exist yet; do not run uv sync here until initialized.
+## Run from the repository root
+
+```sh
+uv sync --project services/backend --locked
+uv run --project services/backend --locked reprosift-api
+```
+
+Uses Python 3.13.15 from the root `.python-version`. Open http://127.0.0.1:8000/health or http://127.0.0.1:8000/docs. Restart after code changes; this entry point does not enable automatic reload.
+
+`GET /health` returns `{"status":"ok","service":"reprosift-api"}`. This is process liveness only; it does not check a database, MCP connection or model provider. No external service credentials are needed. Investigation routes and workers are not implemented.
+
+## Configuration
+
+Settings load once before the CLI opens the server socket. With no arguments, only process environment and defaults are used. To read a dotenv file explicitly:
+
+```sh
+uv run --project services/backend --locked reprosift-api --env-file .env
+```
+
+The path is relative to the invoking terminal's directory. No automatic dotenv search occurs. Environment variables override file values; missing or unreadable requested files fail startup.
+
+| Variable  | Default     | Validation                              |
+| --------- | ----------- | --------------------------------------- |
+| APP_ENV   | development | development, test or production         |
+| API_HOST  | 127.0.0.1   | IPv4 or IPv6 address                    |
+| API_PORT  | 8000        | Integer from 1 to 65535                 |
+| LOG_LEVEL | info        | debug, info, warning, error or critical |
+
+Invalid values fail startup with exit code 2 and field/error categories, without logging the supplied values. Extra dotenv keys are ignored because the root template also documents future features. Those future settings are not yet validated. Production disables `/docs` and `/openapi.json`.
+
+## Structure and checks
+
+- `src/reprosift/config.py`: validated immutable process settings.
+- `src/reprosift/app.py`: app factory with explicit settings injection.
+- `src/reprosift/health.py`: typed HTTP response and health route.
+- `src/reprosift/cli.py`: configuration validation and server lifecycle entry point.
+- `tests/test_api.py`: health contract, configuration errors, dotenv precedence and CLI error redaction.
+
+```sh
+uv run --directory services/backend --locked ruff format --check
+uv run --directory services/backend --locked ruff check
+uv run --directory services/backend --locked mypy
+uv run --directory services/backend --locked pytest
+```
+
+These commands select the backend working directory so checks discover its configuration. Python checks were introduced here to satisfy the coding standards; Step 6 still covers repository-wide checks and TypeScript lint/test setup.
+
+Settings follow the [FastAPI settings guide](https://fastapi.tiangolo.com/advanced/settings/); packaging uses the [uv build backend](https://docs.astral.sh/uv/concepts/build-backend/). Dependencies are pinned in `pyproject.toml` and resolved in `uv.lock`.
 
 This directory is deliberately outside pnpm workspace globs. One Python backend package is sufficient; do not add a separate uv workspace until multiple Python packages actually require one.

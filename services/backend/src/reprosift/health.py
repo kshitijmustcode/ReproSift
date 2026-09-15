@@ -1,0 +1,18 @@
+"""Process liveness; does not claim downstream services are ready."""
+
+from typing import Literal
+
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+router = APIRouter()
+
+
+class HealthResponse(BaseModel):
+    status: Literal["ok"] = "ok"
+    service: Literal["reprosift-api"] = "reprosift-api"
+
+
+@router.get("/health", response_model=HealthResponse, tags=["health"])
+async def health() -> HealthResponse:
+    return HealthResponse()

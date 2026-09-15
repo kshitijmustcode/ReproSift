@@ -29,4 +29,4 @@ pnpm format:check
 
 packageManager pins pnpm; .nvmrc and .python-version pin runtimes. .npmrc enforces declared engines and saves new npm dependencies as exact versions. Internal dependencies should use workspace:* when introduced. Avoid adding fake scripts that return success for nonexistent apps or tests.
 
-Python setup remains a separate Step 5 task. Preserve package names and placeholder ownership notes when creating applications in already-existing directories. Add only useful source folders as code is written, rather than empty domain class hierarchies.
+Step 5 adds the independent uv-managed Python package with FastAPI health, validated process settings and Ruff/mypy/pytest checks. From the root run `uv sync --project services/backend --locked`, then `uv run --project services/backend --locked reprosift-api`. See [backend setup](../services/backend/README.md). No separate uv workspace is needed for one package. The agent, worker and persistence remain future implementation.
