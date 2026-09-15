@@ -6,7 +6,10 @@
   "packageManager": "pnpm@11.19.0",
   "scripts": {
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "dev:dashboard": "pnpm --filter @reprosift/dashboard dev",
+    "build:dashboard": "pnpm --filter @reprosift/dashboard build",
+    "typecheck:dashboard": "pnpm --filter @reprosift/dashboard typecheck"
   },
   "devDependencies": {
     "prettier": "3.9.6"

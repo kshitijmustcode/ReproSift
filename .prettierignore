@@ -21,3 +21,7 @@ __pycache__/
 *.egg-info/
 uv.lock
 *.py
+
+# Next.js generated declarations
+**/next-env.d.ts
+*.tsbuildinfo

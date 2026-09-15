@@ -51,4 +51,4 @@ Node 24 is an LTS line and exceeds Next.js's documented minimum Node 20.9. Pytho
 
 Completed on 2026-09-15 after this audit. Git, origin/main, ignore rules and runtime pins are present. The pnpm workspace now discovers five private JavaScript members plus root. Python and supporting directories have ownership notes. Offline frozen-lockfile installation and ignore rules were verified. See [workspace structure](workspace.md).
 
-Next action: Step 3 — scaffold the Next.js dashboard. Python initialization remains Step 5. No application frameworks, API calls or deployment were introduced by Steps 1–2.
+Step 3 dashboard scaffolding is now complete; next action: Step 4 — scaffold the separate demo store. Python initialization remains Step 5. No application frameworks, API calls or deployment were introduced by Steps 1–2.

@@ -4,9 +4,9 @@ Last updated: 2026-09-15.
 
 ## Current status
 
-Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1 and 2 are complete; runnable application scaffolding in Steps 3–34 remains pending.
+Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1–3 are complete. The dashboard runs locally; Steps 4–34 remain pending.
 
-**Next action: Step 3 — create the dashboard.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 4 — create the demo store.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -31,7 +31,7 @@ Planning documents, coding standards and pinned Prettier tooling are complete. W
   - Work: Initialize Git only if absent; add workspace configuration, runtime pins and package structure.
   - Completion check: Existing documents preserved; dependencies and secrets correctly ignored.
 
-- [ ] **Step 3. Create the dashboard**
+- [x] **Step 3. Create the dashboard**
   - Work: Scaffold Next.js with TypeScript, Tailwind and the four product page shells.
   - Completion check: Dashboard opens locally and navigation works.
 
@@ -180,3 +180,5 @@ For completed steps, record actual checks and results. Keep limitations explicit
 - 2026-09-15 — Step 1 complete: Node 24.21.0, pnpm 11.19.0, Python 3.13.15, uv 0.12.13, Docker 29.8.0, Compose 5.5.1 and Git 2.42.0 verified. Docker hello-world passed. Added runtime pins and prerequisites.md. Step 2 remains partial; next action is workspace/package structure.
 
 - 2026-09-15 — Step 2 complete: added pnpm-workspace.yaml, engine/exact-version policy and private manifests for dashboard, demo-store, mcp-server, browser-runner and contracts-ts. Added Python/backend and supporting directory ownership notes. Verified six-project discovery, offline frozen-lockfile installation and ignore rules. Next: Step 3 dashboard. Changes are local until separately committed/pushed.
+
+- 2026-09-15 — Step 3 complete: Next.js, strict TypeScript and Tailwind dashboard with all four routes. Production build and typecheck passed. Browser checks covered navigation, sample/clear draft actions, evidence/requirements toggles, result preview, mobile layout and unknown IDs. Preview data is presentation-only; submission and exports are disabled until implementation. Steps 1–2 were committed as 484bfb8; Step 3 remains local. Next: Step 4, separate demo-store scaffold. ESLint and test infrastructure remain Step 6.
