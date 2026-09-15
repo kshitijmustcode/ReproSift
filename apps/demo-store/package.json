@@ -1,0 +1,7 @@
+{
+  "name": "@reprosift/demo-store",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Separate Next.js shopping application. Scaffold routes in Step 4; implement seeded defects in later steps."
+}

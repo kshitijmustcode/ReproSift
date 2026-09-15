@@ -1,0 +1,7 @@
+{
+  "name": "@reprosift/dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Next.js investigation dashboard. Four product page shells are implemented in Step 3."
+}

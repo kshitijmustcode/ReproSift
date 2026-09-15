@@ -1,0 +1,7 @@
+{
+  "name": "@reprosift/browser-runner",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript browser lifecycle, action execution, structured test generation and replay. Return raw observations; Python owns verification classification."
+}

@@ -1,12 +1,12 @@
 # Execution checklist
 
-Last updated: 2026-09-14.
+Last updated: 2026-09-15.
 
 ## Current status
 
-Planning documents, coding standards and pinned Prettier tooling are complete. Application scaffolding has not started. All 34 implementation steps below remain pending; prior incidental version checks do not complete the prerequisite audit.
+Planning documents, coding standards and pinned Prettier tooling are complete. Workspace setup is complete. Steps 1 and 2 are complete; runnable application scaffolding in Steps 3–34 remains pending.
 
-**Next action: Step 1 — verify prerequisites.** The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 3 — create the dashboard.** See [prerequisite audit](prerequisites.md) for verified versions and startup instructions. The first milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -22,11 +22,12 @@ Planning documents, coding standards and pinned Prettier tooling are complete. A
 
 ## Phase 1 — Scaffold the project
 
-- [ ] **Step 1. Verify prerequisites**
+- [x] **Step 1. Verify prerequisites**
   - Work: Check Node.js, pnpm, Python, uv, Docker and Git. Select compatible runtime versions.
   - Completion check: Required tools run and selected versions are documented.
 
-- [ ] **Step 2. Initialize the repository**
+- [x] **Step 2. Initialize the repository**
+  - Status: complete. Git and runtime pins preserved; pnpm workspace discovers five private members plus root, with a synchronized lockfile and documented directory ownership.
   - Work: Initialize Git only if absent; add workspace configuration, runtime pins and package structure.
   - Completion check: Existing documents preserved; dependencies and secrets correctly ignored.
 
@@ -175,3 +176,7 @@ Planning documents, coding standards and pinned Prettier tooling are complete. A
 | 2026-09-14 | Planning | Complete | Specifications and Prettier already present; 34-step execution checklist recorded. Next: audit prerequisites. |
 
 For completed steps, record actual checks and results. Keep limitations explicit: a saved report is not live execution; repeated test failures alone are not proof of a defect; corrected-version comparison is not proof of absence of all defects.
+
+- 2026-09-15 — Step 1 complete: Node 24.21.0, pnpm 11.19.0, Python 3.13.15, uv 0.12.13, Docker 29.8.0, Compose 5.5.1 and Git 2.42.0 verified. Docker hello-world passed. Added runtime pins and prerequisites.md. Step 2 remains partial; next action is workspace/package structure.
+
+- 2026-09-15 — Step 2 complete: added pnpm-workspace.yaml, engine/exact-version policy and private manifests for dashboard, demo-store, mcp-server, browser-runner and contracts-ts. Added Python/backend and supporting directory ownership notes. Verified six-project discovery, offline frozen-lockfile installation and ignore rules. Next: Step 3 dashboard. Changes are local until separately committed/pushed.

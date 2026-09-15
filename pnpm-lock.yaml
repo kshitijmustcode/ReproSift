@@ -12,6 +12,16 @@ importers:
         specifier: 3.9.6
         version: 3.9.6
 
+  apps/dashboard: {}
+
+  apps/demo-store: {}
+
+  packages/browser-runner: {}
+
+  packages/contracts-ts: {}
+
+  packages/mcp-server: {}
+
 packages:
 
   prettier@3.9.6:

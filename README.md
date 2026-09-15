@@ -139,7 +139,7 @@ Use persistent explicit MCP sessions or explicit browser session IDs with server
 
 Python owns database migrations and application records. TypeScript returns structured observations and artifact references rather than independently editing investigation tables. One verification policy lives in Python; TypeScript executes assertions and reports raw outcomes, not a duplicate policy.
 
-### Suggested repository layout
+### Repository layout (workspace placeholders created)
 
 ```text
 apps/
@@ -149,7 +149,7 @@ services/
   backend/               # one Python package with separate API/worker entry points
     pyproject.toml
     uv.lock
-    src/bug_repro_lab/
+    src/reprosift/           # planned in Step 5
       api/
       agent/
       domain/
@@ -325,9 +325,12 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Current next step: verify prerequisites; application scaffolding is pending.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1 (prerequisites) and 2 (repository/workspace setup) are complete. Next: Step 3, scaffold the dashboard.
 
 Read these before implementing the relevant feature:
+
+- [Workspace structure](docs/workspace.md): package ownership, discovery and install commands.
+- [Prerequisite audit and runtime selection](docs/prerequisites.md): verified tools, runtime pins and setup commands.
 
 - [Complete sample case](docs/sample-case.md): exact seed, actions, requirements and expected values.
 - [Verification rules](docs/verification-rules.md): outcome decision table and replay policy.
@@ -354,7 +357,7 @@ Prettier formats JavaScript/TypeScript and supported documentation/configuration
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The folder contains planning documents and Prettier tooling; application code is not implemented. Next step: scaffold the pnpm workspace and uv-managed Python backend and establish the first vertical slice: submit report → start scoped browser through MCP → capture screenshot → show result.
+The folder contains planning documents, runtime pins, Prettier tooling and five private JavaScript workspace placeholders. The Python backend location is reserved but not initialized. Next: Step 3, scaffold the dashboard in apps/dashboard while preserving its package name. Later steps establish the first browser vertical slice: submit report → start scoped browser through MCP → capture screenshot → show result.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 
@@ -385,3 +388,7 @@ Before installing dependencies, verify current stable compatible versions and of
 - 2026-09-14: User selected Python + TypeScript; revised architecture, service ownership, cross-language contracts, tooling and dispatch plan. Python setup remains pending.
 
 - 2026-09-14: Saved the agreed 34-step execution checklist with progress tracking and phase acceptance checks.
+
+- 2026-09-15: Completed the prerequisite audit, pinned Node/Python, verified Docker execution and recorded Step 2 as partially complete.
+
+- 2026-09-15: Completed Step 2 workspace setup and discovery checks. Runnable applications and Python initialization remain pending.

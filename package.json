@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "prettier": "3.9.6"
+  },
+  "engines": {
+    "node": ">=24.21.0 <25",
+    "pnpm": "11.19.0"
   }
 }

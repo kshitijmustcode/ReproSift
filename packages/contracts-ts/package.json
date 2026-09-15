@@ -1,0 +1,7 @@
+{
+  "name": "@reprosift/contracts-ts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript boundary schemas and generated API types. Pydantic owns API/event contracts; Zod owns browser MCP contracts. Do not duplicate business policies."
+}

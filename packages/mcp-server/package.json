@@ -1,0 +1,7 @@
+{
+  "name": "@reprosift/mcp-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript MCP server exposing scoped Playwright capabilities. Implement the first status tool in Step 7."
+}
