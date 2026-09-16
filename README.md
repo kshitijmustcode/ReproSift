@@ -353,11 +353,15 @@ pnpm check
 
 `pnpm check` runs Prettier and Ruff format verification, ESLint with Next.js Core Web Vitals and TypeScript rules, Ruff lint, strict TypeScript and mypy checks, Vitest, and pytest. Use `pnpm format` to format both language stacks. Focused root commands are `pnpm format:check`, `pnpm lint`, `pnpm typecheck` and `pnpm test`; language-specific variants use `:js` and `:python` suffixes. Generated output, dependencies and environment files stay excluded. ESLint and Prettier are configured to avoid competing formatting rules.
 
+### Local startup
+
+Follow the [local development guide](docs/local-development.md) for a fresh-terminal setup, service startup order, endpoint checks, MCP smoke diagnostic, shutdown, and common failures. It documents the implemented dashboard → FastAPI → Python MCP client → TypeScript status-tool path; no credentials, model calls, or browser execution are needed.
+
 ## Next-session starting instructions
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The dashboard and demo store each have four runnable page shells. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health and its MCP diagnostic is http://127.0.0.1:8000/mcp/status. The dashboard validates and shows that MCP connection state through FastAPI; set `REPROSIFT_API_URL` only when the dashboard needs a different internal API address. Run `pnpm smoke:mcp` to launch the separate MCP process, discover and call its status tool, and close it. `pnpm test:python` builds the server and verifies the real Python-to-TypeScript status call. See [MCP setup](packages/mcp-server/README.md) and [backend setup](services/backend/README.md). Browser-runner and contracts-ts remain placeholders. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 10, document startup.
+The dashboard and demo store each have four runnable page shells. Follow the [local development guide](docs/local-development.md) to start them with FastAPI and verify the dashboard MCP connection card. `pnpm test:python` builds the server and verifies the real Python-to-TypeScript status call. See [MCP setup](packages/mcp-server/README.md) and [backend setup](services/backend/README.md). Browser-runner and contracts-ts remain placeholders. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 11, implement the sample cart.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 

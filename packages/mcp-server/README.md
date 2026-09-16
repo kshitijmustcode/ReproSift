@@ -46,4 +46,4 @@ pnpm check
 
 The root test command builds this package before running the real-process tests. Tests cover tool discovery, structured/text results, invalid arguments, unknown tools, client-close cleanup and stdin EOF. The SDK's legacy and modern negotiation paths are exercised. `pnpm check` includes MCP source and test typing, repository lint and both language test suites.
 
-The v2 package layout and stdio factory follow the [official server guide](https://ts.sdk.modelcontextprotocol.io/v2/get-started/first-server). The SDK's `serveStdio` supports legacy initialization as well as modern clients; actual Python interoperability remains Step 8's acceptance check.
+The v2 package layout and stdio factory follow the [official server guide](https://ts.sdk.modelcontextprotocol.io/v2/get-started/first-server). The SDK's `serveStdio` supports legacy initialization as well as modern clients; Python interoperability is verified by the Step 8 integration tests and the FastAPI dashboard diagnostic. See the [local development guide](../../docs/local-development.md) for startup order.
