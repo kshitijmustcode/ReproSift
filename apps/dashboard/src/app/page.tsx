@@ -11,9 +11,13 @@ import {
   ScanSearch,
 } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { McpStatusCard } from '@/components/mcp-status-card';
+import { getMcpConnectionStatus } from '@/lib/api';
 import { sampleWorkspacePath } from '@/lib/sample-case';
 
-export default function InvestigationsPage() {
+export default async function InvestigationsPage() {
+  const mcpStatus = await getMcpConnectionStatus();
+
   return (
     <>
       <PageHeader
@@ -26,6 +30,7 @@ export default function InvestigationsPage() {
           </Link>
         }
       />
+      <McpStatusCard status={mcpStatus} />
       <section className="intro-card">
         <div>
           <span className="pill light">

@@ -4,9 +4,14 @@ from fastapi import FastAPI
 
 from reprosift.config import Settings, load_settings
 from reprosift.health import router as health_router
+from reprosift.mcp import McpStatusClient
+from reprosift.mcp.status_route import McpStatusReader, create_mcp_status_router
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    mcp_status_reader: McpStatusReader | None = None,
+) -> FastAPI:
     configuration = settings if settings is not None else load_settings()
     app = FastAPI(
         title="ReproSift API",
@@ -17,4 +22,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         openapi_url="/openapi.json" if configuration.app_env != "production" else None,
     )
     app.include_router(health_router)
+    status_reader = (
+        mcp_status_reader
+        if mcp_status_reader is not None
+        else McpStatusClient.from_settings(configuration)
+    )
+    app.include_router(create_mcp_status_router(status_reader))
     return app

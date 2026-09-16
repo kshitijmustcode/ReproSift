@@ -9,6 +9,25 @@ from pydantic import ValidationError
 
 from reprosift.app import create_app
 from reprosift.config import load_settings
+from reprosift.mcp import McpStatus, McpStatusClientError
+from reprosift.mcp.status_client import McpCapabilities
+
+
+class ConnectedMcpStatusReader:
+    async def get_status(self) -> McpStatus:
+        return McpStatus(
+            schema_version=1,
+            service="reprosift-mcp",
+            version="0.0.0",
+            status="ok",
+            transport="stdio",
+            capabilities=McpCapabilities(browser_execution=False),
+        )
+
+
+class UnavailableMcpStatusReader:
+    async def get_status(self) -> McpStatus:
+        raise McpStatusClientError("connect", "Could not start the MCP status session.")
 
 
 @pytest.fixture(autouse=True)
@@ -34,6 +53,41 @@ def test_health_and_openapi_contract() -> None:
         assert response.json() == {"status": "ok", "service": "reprosift-api"}
         assert "/health" in client.get("/openapi.json").json()["paths"]
         assert client.get("/investigations").status_code == 404
+
+
+def test_mcp_status_exposes_a_validated_connected_response() -> None:
+    with TestClient(create_app(mcp_status_reader=ConnectedMcpStatusReader())) as client:
+        response = client.get("/mcp/status")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "connected",
+        "mcp": {
+            "schemaVersion": 1,
+            "service": "reprosift-mcp",
+            "version": "0.0.0",
+            "status": "ok",
+            "transport": "stdio",
+            "capabilities": {"browserExecution": False},
+        },
+    }
+
+
+def test_mcp_status_translates_expected_connection_failure() -> None:
+    with TestClient(
+        create_app(mcp_status_reader=UnavailableMcpStatusReader())
+    ) as client:
+        response = client.get("/mcp/status")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "status": "unavailable",
+        "error": {
+            "code": "MCP_UNAVAILABLE",
+            "safeMessage": "Could not start the MCP status session.",
+            "phase": "connect",
+        },
+    }
 
 
 @pytest.mark.parametrize(

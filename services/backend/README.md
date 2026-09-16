@@ -13,6 +13,8 @@ Uses Python 3.13.15 from the root `.python-version`. Open http://127.0.0.1:8000/
 
 `GET /health` returns `{"status":"ok","service":"reprosift-api"}`. This is process liveness only; it does not check a database, MCP connection or model provider. No external service credentials are needed. Investigation routes and workers are not implemented.
 
+`GET /mcp/status` probes the local TypeScript MCP process through the Python adapter. A successful probe returns `200` with `status: "connected"` and the versioned MCP status payload. Expected launch, call, or validation failures return `503` with `status: "unavailable"` and a safe `MCP_UNAVAILABLE` error. It is a dashboard integration diagnostic, separate from `/health`.
+
 ## Configuration
 
 Settings load once before the CLI opens the server socket. With no arguments, only process environment and defaults are used. To read a dotenv file explicitly:

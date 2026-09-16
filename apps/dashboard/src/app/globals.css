@@ -173,6 +173,42 @@ button:disabled {
   font-size: 11px;
   color: var(--muted);
 }
+.mcp-status-card {
+  margin: 24px 42px 0;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: var(--surface);
+}
+.mcp-status-card.connected {
+  color: #237354;
+}
+.mcp-status-card.unavailable {
+  color: #a4483a;
+}
+.mcp-status-card p,
+.mcp-status-card strong {
+  margin: 0;
+  display: block;
+}
+.mcp-status-card p {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.mcp-status-card strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+.mcp-status-meta {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+}
 .breadcrumb-divider {
   margin: 0 12px;
   color: #a9b5ac;

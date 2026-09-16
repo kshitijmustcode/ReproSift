@@ -50,6 +50,8 @@ Error: code, safeMessage, phase, retriable, correlationId. Example codes: INVALI
 
 POST investigation creates persisted work and returns an ID, not a synchronous browser result. GET status/events reads scoped persisted state. Cancel is idempotent. Replay creates a new replay ID for a fixed candidate. MCP tools validate arguments, enforce trusted context, and delegate; adapters must not leak Playwright/ORM objects into contracts.
 
+Step 9 adds `GET /mcp/status` as a dashboard diagnostic. It returns `200 { status: "connected", mcp: <validated MCP status> }` or `503 { status: "unavailable", error: { code: "MCP_UNAVAILABLE", safeMessage, phase } }`. It does not redefine `/health`: API liveness does not imply MCP readiness. The Next.js server validates this external response with Zod before rendering it; browser clients never call the MCP stdio process.
+
 ## Hybrid implementation ownership
 
 Python/FastAPI owns investigation APIs, events and verification classification. Pydantic defines API/event contracts and exports OpenAPI/JSON Schema; TypeScript consumes derived types and validates untrusted runtime input. TypeScript/Zod owns browser MCP schemas; the Python client validates returned structures. Preserve camelCase wire fields with explicit Python aliases, schema versions, nullability and integer units. Add shared JSON compatibility examples accepted/rejected by both runtimes.

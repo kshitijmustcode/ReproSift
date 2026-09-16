@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–7 are complete. Next: Step 8, connect Python to the TypeScript MCP server.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–9 are complete. Next: Step 10, document startup.
 
 Read these before implementing the relevant feature:
 
@@ -357,7 +357,7 @@ pnpm check
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The dashboard and demo store each have four runnable page shells. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health. Run `pnpm smoke:mcp` to launch the separate MCP process, discover and call its status tool, and close it. `pnpm test:python` builds the server and verifies the real Python-to-TypeScript status call. See [MCP setup](packages/mcp-server/README.md) and [backend setup](services/backend/README.md). Browser-runner and contracts-ts remain placeholders. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 9, dashboard integration.
+The dashboard and demo store each have four runnable page shells. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health and its MCP diagnostic is http://127.0.0.1:8000/mcp/status. The dashboard validates and shows that MCP connection state through FastAPI; set `REPROSIFT_API_URL` only when the dashboard needs a different internal API address. Run `pnpm smoke:mcp` to launch the separate MCP process, discover and call its status tool, and close it. `pnpm test:python` builds the server and verifies the real Python-to-TypeScript status call. See [MCP setup](packages/mcp-server/README.md) and [backend setup](services/backend/README.md). Browser-runner and contracts-ts remain placeholders. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 10, document startup.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 

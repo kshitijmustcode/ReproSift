@@ -4,9 +4,9 @@ Last updated: 2026-09-16.
 
 ## Current status
 
-Steps 1–8 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio, and Python consumes it through a bounded, scoped client session. One root command checks both language stacks, including MCP integration tests. Steps 9–34 remain pending.
+Steps 1–9 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio, Python consumes it through a bounded, scoped client session, and the dashboard shows the FastAPI-owned connection state. One root command checks both language stacks, including MCP integration tests. Steps 10–34 remain pending.
 
-**Next action: Step 9 — connect the dashboard to FastAPI.** Add a typed API client and show the MCP status returned by Python. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 10 — document startup.** Consolidate the local startup sequence and fresh-terminal checks for dashboard, API and MCP diagnostic. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -59,7 +59,8 @@ Steps 1–8 are complete. Dashboard and demo-store page shells and the API healt
   - Work: Add a Python MCP client adapter with explicit session ownership and cleanup.
   - Completion check: Python calls the TypeScript tool and handles connection failure.
 
-- [ ] **Step 9. Connect the dashboard to FastAPI**
+- [x] **Step 9. Connect the dashboard to FastAPI**
+  - Status: complete. FastAPI exposes a typed, safe MCP diagnostic and the dashboard server validates/render its result with Zod; the browser never connects to MCP directly.
   - Work: Add a typed API client and connection-status display.
   - Completion check: Dashboard displays MCP status obtained through Python.
 
@@ -176,6 +177,8 @@ Steps 1–8 are complete. Dashboard and demo-store page shells and the API healt
 ## Progress log
 
 - 2026-09-16 — Step 7 committed as 0ce5290. Step 8 complete: added the official Python MCP SDK 2.2.0 and a scoped stdio adapter that launches the compiled Node entry point, initializes/calls with separate bounded timeouts, validates the camelCase version 1 response, and closes the session/child process through nested context managers. Sixteen Python tests passed, including a real cross-language call plus missing entry point, unavailable executable, timeout, and invalid response cases. Ruff and strict mypy passed. The existing Starlette deprecation warning remains. Step 8 changes are local. Next: Step 9, dashboard integration; no browser execution yet.
+
+- 2026-09-16 — Step 8 committed as 3eab409. Step 9 complete: FastAPI now owns `GET /mcp/status`, returning a typed connected response or safe 503 unavailable response without changing liveness semantics. The Next.js server uses a Zod-validated, six-second no-store request and renders the result on the investigations page. Live local verification returned the Node MCP status through FastAPI and rendered “Connected to reprosift-mcp” in dashboard HTML. Eighteen Python tests, 18 TypeScript tests, lint and type checks passed; the existing Starlette deprecation warning remains. Step 9 changes are local. Next: Step 10, document startup; no browser execution yet.
 
 - 2026-09-15 — Step 4 committed as 315b6fb. Step 5 complete: Python 3.13.15 package with pinned FastAPI/Pydantic Settings/Uvicorn and uv.lock. `uv run --locked reprosift-api` starts on 127.0.0.1:8000; real HTTP `/health` returns the documented liveness response. Ruff formatting/lint and strict mypy passed; 11 pytest cases passed covering health/OpenAPI, invalid configuration, dotenv precedence, production docs and CLI input redaction. Two upstream Starlette deprecation warnings remain (httpx test transport and AnyIO BlockingPortal alias); checks pass. Root `.env.example` distinguishes four consumed API settings from proposed future settings. No agent, MCP, persistence or worker is implemented. Step 5 changes are uncommitted. Next: Step 6, add remaining repository/TypeScript checks while preserving the Python checks.
 

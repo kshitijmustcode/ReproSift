@@ -12,6 +12,8 @@ pnpm dev:dashboard
 
 Open http://127.0.0.1:3000. Validate with `pnpm build:dashboard`, `pnpm typecheck:dashboard` and `pnpm format:check`.
 
+The home page reads `GET /mcp/status` from FastAPI during server rendering and shows the validated connection state. It defaults to `http://127.0.0.1:8000`; set `REPROSIFT_API_URL` when the API uses another internal URL. This is a server-only setting, so browser clients do not call MCP or receive MCP process configuration.
+
 ## Page shells
 
 - `/`: investigation home and empty history.
@@ -23,4 +25,4 @@ Dynamic routes currently accept only `sample-coupon`; unknown IDs show the not-f
 
 ## Current limits
 
-No API, database, MCP or model calls are connected. Drafts are not persisted. Investigation submission and exports are disabled. The preview does not claim a reproduced or verified defect. Root ESLint, typecheck and Vitest commands cover this app; `sample-case.test.ts` protects its authored preview links and expected result.
+Only the MCP connection status is connected. Drafts are not persisted. Investigation submission and exports are disabled. The preview does not claim a reproduced or verified defect. Root ESLint, typecheck and Vitest commands cover this app; its API test validates connected and malformed-response handling.
