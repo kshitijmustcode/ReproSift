@@ -6,7 +6,7 @@ Repository: [kshitijmustcode/ReproSift](https://github.com/kshitijmustcode/Repro
 
 > Project planning and continuity document. Dashboard, demo-store page shells and API health endpoint run locally; investigation execution is still planned.
 
-Last updated: 2026-09-15
+Last updated: 2026-09-16
 
 ## Product goal
 
@@ -103,7 +103,7 @@ The user selected a Python + TypeScript architecture. TypeScript remains the typ
 | JavaScript tooling         | pnpm + Prettier + ESLint + TypeScript + Vitest       | One root command validates both applications                                  |
 | Local infrastructure       | Docker Compose                                       | Reproducible API, worker, MCP browser service, database and optional queue    |
 
-Prettier and both Next.js applications (React, TypeScript, Tailwind CSS and Lucide icons) are installed. Both apps use the same pinned framework versions and root lockfile. The Python package includes FastAPI, Pydantic Settings, Uvicorn and Ruff/mypy/pytest checks, with its own uv.lock. Agent, database and MCP dependencies remain planned.
+Prettier and both Next.js applications (React, TypeScript, Tailwind CSS and Lucide icons) are installed. Both apps use the same pinned framework versions and root lockfile. The Python package includes FastAPI, Pydantic Settings, Uvicorn and Ruff/mypy/pytest checks, with its own uv.lock. The TypeScript MCP package uses the official SDK v2 and Zod for a status tool over stdio. Agent, database and Python MCP integration remain planned.
 
 FastMCP is unnecessary for this browser server because Playwright capabilities live in TypeScript. The Python orchestrator is an MCP client. Add a Python MCP server only if a distinct Python capability needs external exposure. Keep OpenAI as the initial provider; this language change does not require Claude or a computer-use API.
 
@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–6 are complete. Next: Step 7, create the TypeScript MCP server and its first status tool.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–7 are complete. Next: Step 8, connect Python to the TypeScript MCP server.
 
 Read these before implementing the relevant feature:
 
@@ -357,7 +357,7 @@ pnpm check
 
 Read this README first, inspect existing files and repository status, and preserve user changes. Check for applicable AGENTS.md instructions. Update this document when scope or architecture changes.
 
-The dashboard and demo store each have four runnable page shells; the three library packages remain placeholders. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health. See [backend setup and checks](services/backend/README.md) for configuration and Python commands. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 7, create the TypeScript MCP server. Later steps connect the dashboard to the API and MCP.
+The dashboard and demo store each have four runnable page shells. Run `pnpm dev:dashboard` for http://127.0.0.1:3000 and `pnpm dev:store` for http://127.0.0.1:3001 in separate terminals. Start the API with `uv run --project services/backend --locked reprosift-api`; its health endpoint is http://127.0.0.1:8000/health. Run `pnpm smoke:mcp` to launch the separate MCP process, discover and call its status tool, and close it. See [MCP setup](packages/mcp-server/README.md) and [backend setup](services/backend/README.md). Browser-runner and contracts-ts remain placeholders. Run `pnpm check` before accepting changes. Sample previews do not execute or persist investigations; store cart actions and ordering are disabled. Next: Step 8, connect Python to MCP, followed by Step 9's dashboard integration.
 
 Before installing dependencies, verify current stable compatible versions and official OpenAI/API documentation. Do not infer permission to buy services, expose unrestricted browser execution, or send messages/create external PRs from this planning document.
 

@@ -15,10 +15,10 @@
     "lint:js": "eslint . --max-warnings 0",
     "lint:python": "uv run --directory services/backend --locked ruff check",
     "typecheck": "pnpm typecheck:js && pnpm typecheck:python",
-    "typecheck:js": "pnpm typecheck:dashboard && pnpm typecheck:store",
+    "typecheck:js": "pnpm typecheck:dashboard && pnpm typecheck:store && pnpm typecheck:mcp",
     "typecheck:python": "uv run --directory services/backend --locked mypy",
     "test": "pnpm test:js && pnpm test:python",
-    "test:js": "vitest run",
+    "test:js": "pnpm build:mcp && vitest run",
     "test:python": "uv run --directory services/backend --locked pytest",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "dev:dashboard": "pnpm --filter @reprosift/dashboard dev",
@@ -26,7 +26,10 @@
     "typecheck:dashboard": "pnpm --filter @reprosift/dashboard typecheck",
     "dev:store": "pnpm --filter @reprosift/demo-store dev",
     "build:store": "pnpm --filter @reprosift/demo-store build",
-    "typecheck:store": "pnpm --filter @reprosift/demo-store typecheck"
+    "typecheck:store": "pnpm --filter @reprosift/demo-store typecheck",
+    "build:mcp": "pnpm --filter @reprosift/mcp-server build",
+    "typecheck:mcp": "pnpm --filter @reprosift/mcp-server typecheck",
+    "smoke:mcp": "pnpm --filter @reprosift/mcp-server smoke"
   },
   "devDependencies": {
     "eslint": "9.39.5",

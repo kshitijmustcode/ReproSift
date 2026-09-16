@@ -1,12 +1,12 @@
 # Execution checklist
 
-Last updated: 2026-09-15.
+Last updated: 2026-09-16.
 
 ## Current status
 
-Steps 1–6 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. One root command checks both language stacks. Steps 7–34 remain pending.
+Steps 1–7 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio. One root command checks both language stacks, including MCP integration tests. Steps 8–34 remain pending.
 
-**Next action: Step 7 — create the MCP server.** See [prerequisite audit](prerequisites.md) for startup instructions. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 8 — connect Python to MCP.** Use the compiled Node entry point and validate the version 1 status response in Python, with bounded connection/call timeouts and explicit session cleanup. See [MCP package setup](../packages/mcp-server/README.md). The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -49,7 +49,8 @@ Steps 1–6 are complete. Dashboard and demo-store page shells and the API healt
   - Work: Add TypeScript checks, ESLint, Ruff, mypy, pytest and basic test configuration. Retain Prettier.
   - Completion check: Formatting, linting, type checks and starter tests pass.
 
-- [ ] **Step 7. Create the MCP server**
+- [x] **Step 7. Create the MCP server**
+  - Status: complete. Official TypeScript SDK v2, Zod input/output schemas, stdio lifecycle, smoke client and real-process protocol tests.
   - Work: Initialize the TypeScript MCP server with a small status tool and validated output.
   - Completion check: An MCP client can discover and call the tool.
 
@@ -172,6 +173,8 @@ Steps 1–6 are complete. Dashboard and demo-store page shells and the API healt
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-16 — Step 6 committed as d08fd55. Step 7 complete: @modelcontextprotocol/server and development client 2.0.0, Zod 4.6.5, strict NodeNext build/typecheck. `get_status` accepts only an empty object, returns schemaVersion 1 structured/text status and explicitly reports browserExecution=false. `pnpm smoke:mcp` discovers/calls the tool and closes its child process. Eleven new MCP tests exercise legacy and modern negotiation, discovery, output, rejected arguments/tool names, cleanup and stdin EOF. Full `pnpm check` passed (16 TypeScript tests, 11 Python tests); frozen install and diff check passed. The existing two Python dependency warnings remain. All three existing localhost services responded successfully. Step 7 changes are uncommitted. Next: Step 8, Python MCP client; no dashboard wiring or browser execution yet.
 
 - 2026-09-15 — Step 4 committed as 315b6fb. Step 5 complete: Python 3.13.15 package with pinned FastAPI/Pydantic Settings/Uvicorn and uv.lock. `uv run --locked reprosift-api` starts on 127.0.0.1:8000; real HTTP `/health` returns the documented liveness response. Ruff formatting/lint and strict mypy passed; 11 pytest cases passed covering health/OpenAPI, invalid configuration, dotenv precedence, production docs and CLI input redaction. Two upstream Starlette deprecation warnings remain (httpx test transport and AnyIO BlockingPortal alias); checks pass. Root `.env.example` distinguishes four consumed API settings from proposed future settings. No agent, MCP, persistence or worker is implemented. Step 5 changes are uncommitted. Next: Step 6, add remaining repository/TypeScript checks while preserving the Python checks.
 

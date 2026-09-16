@@ -51,4 +51,4 @@ Node 24 is an LTS line and exceeds Next.js's documented minimum Node 20.9. Pytho
 
 Completed on 2026-09-15 after this audit. Git, origin/main, ignore rules and runtime pins are present. The pnpm workspace now discovers five private JavaScript members plus root. Python and supporting directories have ownership notes. Offline frozen-lockfile installation and ignore rules were verified. See [workspace structure](workspace.md).
 
-Steps 3–6 application scaffolding and repository checks are complete; next action: Step 7 — create the TypeScript MCP server. No application frameworks, API calls or deployment were introduced by Steps 1–2.
+Steps 3–7 application scaffolding, checks and the TypeScript MCP status server are complete; next action: Step 8 — connect Python to MCP. The MCP smoke command needs only Node and installed workspace dependencies. No application frameworks, API calls or deployment were introduced by Steps 1–2.

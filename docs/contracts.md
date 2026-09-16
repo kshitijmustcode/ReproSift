@@ -1,6 +1,6 @@
 # Core contracts — proposed version 1
 
-Status: design specification, not implemented API. During implementation, owner schemas in the Python backend and packages/contracts-ts become authoritative; update this document with links rather than maintaining conflicting type copies.
+Status: investigation contracts below remain design specifications. The Step 7 MCP status contract is implemented in [status.ts](../packages/mcp-server/src/status.ts) and documented in the [MCP package](../packages/mcp-server/README.md). It has schemaVersion 1, strict empty input and explicit browserExecution=false. Python response validation and shared compatibility examples arrive in Step 8. During further implementation, owner schemas in the Python backend and packages/contracts-ts become authoritative; update this document with links rather than maintaining conflicting type copies.
 
 ## Shared conventions
 
