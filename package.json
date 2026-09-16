@@ -19,7 +19,7 @@
     "typecheck:python": "uv run --directory services/backend --locked mypy",
     "test": "pnpm test:js && pnpm test:python",
     "test:js": "pnpm build:mcp && vitest run",
-    "test:python": "uv run --directory services/backend --locked pytest",
+    "test:python": "pnpm build:mcp && uv run --directory services/backend --locked pytest",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "dev:dashboard": "pnpm --filter @reprosift/dashboard dev",
     "build:dashboard": "pnpm --filter @reprosift/dashboard build",

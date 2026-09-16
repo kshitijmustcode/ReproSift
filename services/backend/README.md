@@ -23,14 +23,22 @@ uv run --project services/backend --locked reprosift-api --env-file .env
 
 The path is relative to the invoking terminal's directory. No automatic dotenv search occurs. Environment variables override file values; missing or unreadable requested files fail startup.
 
-| Variable  | Default     | Validation                              |
-| --------- | ----------- | --------------------------------------- |
-| APP_ENV   | development | development, test or production         |
-| API_HOST  | 127.0.0.1   | IPv4 or IPv6 address                    |
-| API_PORT  | 8000        | Integer from 1 to 65535                 |
-| LOG_LEVEL | info        | debug, info, warning, error or critical |
+| Variable               | Default                         | Validation / use                                       |
+| ---------------------- | ------------------------------- | ------------------------------------------------------ |
+| APP_ENV                | development                     | development, test or production                        |
+| API_HOST               | 127.0.0.1                       | IPv4 or IPv6 address                                   |
+| API_PORT               | 8000                            | Integer from 1 to 65535                                |
+| LOG_LEVEL              | info                            | debug, info, warning, error or critical                |
+| MCP_NODE_COMMAND       | node                            | Local executable that launches the stdio MCP process   |
+| MCP_SERVER_ENTRYPOINT  | packages/mcp-server/dist/cli.js | Absolute path or repository-relative compiled entry    |
+| MCP_CONNECT_TIMEOUT_MS | 5000                            | Integer from 100 to 30000; launch and initialize bound |
+| MCP_CALL_TIMEOUT_MS    | 5000                            | Integer from 100 to 30000; per-tool-call bound         |
 
-Invalid values fail startup with exit code 2 and field/error categories, without logging the supplied values. Extra dotenv keys are ignored because the root template also documents future features. Those future settings are not yet validated. Production disables `/docs` and `/openapi.json`.
+Invalid values fail startup with exit code 2 and field/error categories, without logging the supplied values. Extra dotenv keys are ignored because the root template also documents future features. Production disables `/docs` and `/openapi.json`.
+
+## MCP status adapter
+
+The Python investigation service owns the client session. `McpStatusClient.from_settings(Settings())` starts the compiled TypeScript server over stdio, initializes one session, calls `get_status`, validates the camelCase response as an immutable Python contract, then closes both session and child process. It reports safe `connect`, `call`, or `validate` errors; connection and call timeouts are bounded independently. `pnpm test:python` builds the TypeScript entry point first and runs a real cross-language test, plus missing-server, unavailable-command, timeout, and malformed-response cases.
 
 ## Structure and checks
 
@@ -38,7 +46,9 @@ Invalid values fail startup with exit code 2 and field/error categories, without
 - `src/reprosift/app.py`: app factory with explicit settings injection.
 - `src/reprosift/health.py`: typed HTTP response and health route.
 - `src/reprosift/cli.py`: configuration validation and server lifecycle entry point.
+- `src/reprosift/mcp/status_client.py`: scoped stdio MCP adapter and status contract.
 - `tests/test_api.py`: health contract, configuration errors, dotenv precedence and CLI error redaction.
+- `tests/test_mcp_status_client.py`: real TypeScript MCP integration and failure handling.
 
 ```sh
 uv run --directory services/backend --locked ruff format --check

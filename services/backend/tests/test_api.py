@@ -14,7 +14,16 @@ from reprosift.config import load_settings
 @pytest.fixture(autouse=True)
 def clean_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     for key in list(os.environ):
-        if key.lower() in {"app_env", "api_host", "api_port", "log_level"}:
+        if key.lower() in {
+            "app_env",
+            "api_host",
+            "api_port",
+            "log_level",
+            "mcp_node_command",
+            "mcp_server_entrypoint",
+            "mcp_connect_timeout_ms",
+            "mcp_call_timeout_ms",
+        }:
             monkeypatch.delenv(key)
 
 
