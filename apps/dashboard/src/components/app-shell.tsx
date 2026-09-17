@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ArrowUpRight, FlaskConical, Layers3, Plus, ScanLine, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { sampleWorkspacePath } from '@/lib/sample-case';
+import { ThemeToggle } from './theme-toggle';
 
 const navigation = [
   { href: '/', label: 'Investigations', icon: Layers3 },
@@ -71,9 +72,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                   ? 'Result & replay'
                   : 'Investigation'}
           </span>
-          <span className="preview-indicator">
-            <span /> Interface preview
-          </span>
+          <div className="topbar-actions">
+            <span className="preview-indicator">
+              <span /> Interface preview
+            </span>
+            <ThemeToggle />
+          </div>
         </header>
         <main id="main-content" tabIndex={-1}>
           {children}

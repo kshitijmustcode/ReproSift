@@ -8,9 +8,21 @@ export const metadata: Metadata = {
   description: 'Turn UI bug reports into evidence-backed, replayable regression tests.',
 };
 
+const themeInitializationScript = `(() => {
+  try {
+    const theme = localStorage.getItem('reprosift-theme');
+    if (theme === 'dark' || theme === 'light') {
+      document.documentElement.dataset.theme = theme;
+    }
+  } catch {}
+})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+      </head>
       <body>
         <AppShell>{children}</AppShell>
       </body>
