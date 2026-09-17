@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–11 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio, Python consumes it through a bounded, scoped client session, and the dashboard shows the FastAPI-owned connection state. The demo store now implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. A fresh-terminal guide documents the startup order and diagnostics. One root command checks both language stacks, including MCP integration tests. Steps 12–34 remain pending.
+Steps 1–12 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status and browser lifecycle tools over stdio; Python owns a fresh process/session to capture the allowed cart route, and the dashboard renders the returned screenshot. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 13–34 remain pending.
 
-**Next action: Step 12 — add browser lifecycle tools.** Implement scoped session creation, allowed navigation, screenshots and cleanup. The first browser integration milestone is Python → MCP → TypeScript browser lifecycle tools. No LLM calls are needed for that milestone.
+**Next action: Step 13 — add browser actions.** Implement page inspection, click, fill and select with runtime validation. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -76,7 +76,8 @@ Steps 1–11 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Build the documented coupon scenario with seeded data and buggy/corrected variants.
   - Completion check: Manual reproduction gives the specified totals.
 
-- [ ] **Step 12. Add browser lifecycle tools**
+- [x] **Step 12. Add browser lifecycle tools**
+  - Status: complete. Playwright Chromium sessions are isolated, limited to the configured local demo-store origin, and explicitly closed through Python-owned MCP calls. The FastAPI screenshot route validates the returned PNG payload and the sample dashboard workspace renders it without exposing MCP configuration.
   - Work: Implement scoped session creation, allowed navigation, screenshots and cleanup.
   - Completion check: Python requests a screenshot through MCP and the UI displays it.
 
@@ -177,6 +178,8 @@ Steps 1–11 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-17 — Step 12 complete: added a Playwright Chromium lifecycle adapter with UUID session ownership, allowed-relative-path navigation, in-memory PNG capture and explicit context/browser cleanup. The TypeScript MCP server exposes lifecycle tools; Python owns their bounded create → navigate → screenshot → close sequence; FastAPI validates and serves an ephemeral capture; the sample dashboard workspace renders it. Browser verification confirmed the screenshot is shown. `pnpm check` passed with 26 TypeScript and 20 Python tests; the existing Starlette deprecation warning remains. Next: Step 13, add browser actions.
 
 - 2026-09-17 — Step 11 complete: implemented the seeded REQ-CART-001 cart fixture in `apps/demo-store`, with pure integer-cent totals, coupon application, resettable local state, and server-side local selection between buggy and corrected behavior. Focused cart/catalog tests (10 assertions), strict store typecheck, and production build passed. Browser verification confirmed the default buggy workflow ends at subtotal $100.00, discount $15.00 and total $85.00 after applying SAVE10 then removing Item B; corrected mode ends at $100.00, $10.00 and $90.00. Next: Step 12, add browser lifecycle tools.
 

@@ -15,7 +15,7 @@ def test_python_client_calls_compiled_typescript_mcp_server() -> None:
     assert status.service == "reprosift-mcp"
     assert status.status == "ok"
     assert status.transport == "stdio"
-    assert status.capabilities.browser_execution is False
+    assert status.capabilities.browser_execution is True
 
 
 def test_missing_compiled_server_is_reported_without_spawning_a_process(
@@ -73,7 +73,7 @@ def test_invalid_wire_response_is_not_accepted() -> None:
                 "version": "0.0.0",
                 "status": "ok",
                 "transport": "stdio",
-                "capabilities": {"browserExecution": False},
+                "capabilities": {"browserExecution": True},
             }
         )
 

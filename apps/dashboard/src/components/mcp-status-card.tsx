@@ -10,7 +10,7 @@ export function McpStatusCard({ status }: { status: McpConnectionStatus }) {
           <p>MCP status</p>
           <strong>Connected to {status.mcp.service}</strong>
         </div>
-        <span className="mcp-status-meta">stdio · browser execution unavailable</span>
+        <span className="mcp-status-meta">stdio · browser lifecycle available</span>
       </section>
     );
   }

@@ -12,7 +12,7 @@ const expectedStatus = {
   version: '0.0.0',
   status: 'ok',
   transport: 'stdio',
-  capabilities: { browserExecution: false },
+  capabilities: { browserExecution: true },
 };
 
 describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)', (mode) => {
@@ -35,16 +35,26 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
 
   it('advertises the status tool with input and output contracts', async () => {
     const { tools } = await client.listTools({}, { timeout: 5000 });
-    expect(tools).toHaveLength(1);
-    expect(tools[0]).toMatchObject({
+    expect(tools.map((tool) => tool.name)).toEqual([
+      'get_status',
+      'create_browser_session',
+      'navigate_browser_session',
+      'capture_screenshot',
+      'close_browser_session',
+    ]);
+    expect(tools.find((tool) => tool.name === 'get_status')).toMatchObject({
       name: 'get_status',
       inputSchema: { type: 'object', additionalProperties: false },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, openWorldHint: false },
     });
+    expect(tools.find((tool) => tool.name === 'navigate_browser_session')).toMatchObject({
+      inputSchema: { type: 'object', required: ['sessionId', 'path'] },
+      annotations: { openWorldHint: false },
+    });
   });
 
-  it('returns consistent structured and text status without claiming browser readiness', async () => {
+  it('returns consistent structured and text status with browser lifecycle capability', async () => {
     const result = await client.callTool({ name: 'get_status', arguments: {} }, { timeout: 5000 });
     expect(result.isError).not.toBe(true);
     expect(result.structuredContent).toEqual(expectedStatus);

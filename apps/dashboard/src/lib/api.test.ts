@@ -1,8 +1,36 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getMcpConnectionStatus } from './api';
+import { getMcpConnectionStatus, getSampleCartScreenshot } from './api';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('getSampleCartScreenshot', () => {
+  it('accepts the captured screenshot response contract', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            status: 'captured',
+            screenshot: {
+              schemaVersion: 1,
+              contentType: 'image/png',
+              base64: 'aW1hZ2U=',
+              capturedAt: '2026-09-17T00:00:00Z',
+              url: 'http://127.0.0.1:3001/cart',
+              title: 'Your cart | ReproSift Store',
+            },
+          }),
+        ),
+      ),
+    );
+
+    await expect(getSampleCartScreenshot()).resolves.toMatchObject({
+      status: 'captured',
+      screenshot: { contentType: 'image/png' },
+    });
+  });
 });
 
 describe('getMcpConnectionStatus', () => {
@@ -19,7 +47,7 @@ describe('getMcpConnectionStatus', () => {
               version: '0.0.0',
               status: 'ok',
               transport: 'stdio',
-              capabilities: { browserExecution: false },
+              capabilities: { browserExecution: true },
             },
           }),
         ),

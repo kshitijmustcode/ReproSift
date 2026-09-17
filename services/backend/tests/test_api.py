@@ -9,7 +9,12 @@ from pydantic import ValidationError
 
 from reprosift.app import create_app
 from reprosift.config import load_settings
-from reprosift.mcp import McpStatus, McpStatusClientError
+from reprosift.mcp import (
+    BrowserScreenshot,
+    BrowserScreenshotClientError,
+    McpStatus,
+    McpStatusClientError,
+)
 from reprosift.mcp.status_client import McpCapabilities
 
 
@@ -21,13 +26,31 @@ class ConnectedMcpStatusReader:
             version="0.0.0",
             status="ok",
             transport="stdio",
-            capabilities=McpCapabilities(browser_execution=False),
+            capabilities=McpCapabilities(browser_execution=True),
         )
 
 
 class UnavailableMcpStatusReader:
     async def get_status(self) -> McpStatus:
         raise McpStatusClientError("connect", "Could not start the MCP status session.")
+
+
+class CapturedBrowserScreenshotReader:
+    async def capture_cart(self) -> BrowserScreenshot:
+        return BrowserScreenshot(
+            content_type="image/png",
+            base64="aW1hZ2U=",
+            captured_at="2026-09-17T00:00:00Z",
+            url="http://127.0.0.1:3001/cart",
+            title="Your cart | ReproSift Store",
+        )
+
+
+class UnavailableBrowserScreenshotReader:
+    async def capture_cart(self) -> BrowserScreenshot:
+        raise BrowserScreenshotClientError(
+            "navigate", "Browser navigate returned an error."
+        )
 
 
 @pytest.fixture(autouse=True)
@@ -68,7 +91,7 @@ def test_mcp_status_exposes_a_validated_connected_response() -> None:
             "version": "0.0.0",
             "status": "ok",
             "transport": "stdio",
-            "capabilities": {"browserExecution": False},
+            "capabilities": {"browserExecution": True},
         },
     }
 
@@ -86,6 +109,43 @@ def test_mcp_status_translates_expected_connection_failure() -> None:
             "code": "MCP_UNAVAILABLE",
             "safeMessage": "Could not start the MCP status session.",
             "phase": "connect",
+        },
+    }
+
+
+def test_browser_screenshot_exposes_the_validated_capture() -> None:
+    with TestClient(
+        create_app(browser_screenshot_reader=CapturedBrowserScreenshotReader())
+    ) as client:
+        response = client.get("/browser/sample-cart/screenshot")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "captured",
+        "screenshot": {
+            "schemaVersion": 1,
+            "contentType": "image/png",
+            "base64": "aW1hZ2U=",
+            "capturedAt": "2026-09-17T00:00:00Z",
+            "url": "http://127.0.0.1:3001/cart",
+            "title": "Your cart | ReproSift Store",
+        },
+    }
+
+
+def test_browser_screenshot_translates_expected_lifecycle_failure() -> None:
+    with TestClient(
+        create_app(browser_screenshot_reader=UnavailableBrowserScreenshotReader())
+    ) as client:
+        response = client.get("/browser/sample-cart/screenshot")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "status": "unavailable",
+        "error": {
+            "code": "BROWSER_UNAVAILABLE",
+            "safeMessage": "Browser navigate returned an error.",
+            "phase": "navigate",
         },
     }
 

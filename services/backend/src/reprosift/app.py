@@ -4,13 +4,18 @@ from fastapi import FastAPI
 
 from reprosift.config import Settings, load_settings
 from reprosift.health import router as health_router
-from reprosift.mcp import McpStatusClient
+from reprosift.mcp import BrowserScreenshotClient, McpStatusClient
+from reprosift.mcp.browser_route import (
+    BrowserScreenshotReader,
+    create_browser_screenshot_router,
+)
 from reprosift.mcp.status_route import McpStatusReader, create_mcp_status_router
 
 
 def create_app(
     settings: Settings | None = None,
     mcp_status_reader: McpStatusReader | None = None,
+    browser_screenshot_reader: BrowserScreenshotReader | None = None,
 ) -> FastAPI:
     configuration = settings if settings is not None else load_settings()
     app = FastAPI(
@@ -28,4 +33,10 @@ def create_app(
         else McpStatusClient.from_settings(configuration)
     )
     app.include_router(create_mcp_status_router(status_reader))
+    screenshot_reader = (
+        browser_screenshot_reader
+        if browser_screenshot_reader is not None
+        else BrowserScreenshotClient.from_settings(configuration)
+    )
+    app.include_router(create_browser_screenshot_router(screenshot_reader))
     return app

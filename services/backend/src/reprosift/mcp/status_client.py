@@ -16,7 +16,7 @@ class McpCapabilities(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
 
-    browser_execution: Literal[False] = Field(alias="browserExecution")
+    browser_execution: Literal[True] = Field(alias="browserExecution")
 
 
 class McpStatus(BaseModel):

@@ -15,7 +15,7 @@
     "lint:js": "eslint . --max-warnings 0",
     "lint:python": "uv run --directory services/backend --locked ruff check",
     "typecheck": "pnpm typecheck:js && pnpm typecheck:python",
-    "typecheck:js": "pnpm typecheck:dashboard && pnpm typecheck:store && pnpm typecheck:mcp",
+    "typecheck:js": "pnpm typecheck:dashboard && pnpm typecheck:store && pnpm typecheck:browser-runner && pnpm typecheck:mcp",
     "typecheck:python": "uv run --directory services/backend --locked mypy",
     "test": "pnpm test:js && pnpm test:python",
     "test:js": "pnpm build:mcp && vitest run",
@@ -27,7 +27,8 @@
     "dev:store": "pnpm --filter @reprosift/demo-store dev",
     "build:store": "pnpm --filter @reprosift/demo-store build",
     "typecheck:store": "pnpm --filter @reprosift/demo-store typecheck",
-    "build:mcp": "pnpm --filter @reprosift/mcp-server build",
+    "build:mcp": "pnpm --filter @reprosift/browser-runner build && pnpm --filter @reprosift/mcp-server build",
+    "typecheck:browser-runner": "pnpm --filter @reprosift/browser-runner typecheck",
     "typecheck:mcp": "pnpm --filter @reprosift/mcp-server typecheck",
     "smoke:mcp": "pnpm --filter @reprosift/mcp-server smoke"
   },

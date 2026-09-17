@@ -27,7 +27,7 @@ export function PreviewNotice() {
   return (
     <p className="preview-notice">
       <strong>Sample preview.</strong> Illustrative content only. No browser session, investigation,
-      or verification has run.
+      or verification has run beyond the bounded screenshot shown below.
     </p>
   );
 }

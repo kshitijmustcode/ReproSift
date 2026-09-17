@@ -796,6 +796,22 @@ textarea::placeholder {
   color: #87957b;
   padding: 24px;
 }
+.browser-capture {
+  background: #e9eee9;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.browser-capture img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.browser-capture p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 0;
+  padding: 9px 12px;
+}
 .browser-placeholder h3 {
   font-size: 14px;
   color: #4f6246;

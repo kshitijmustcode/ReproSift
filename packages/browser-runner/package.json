@@ -3,5 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "TypeScript browser lifecycle, action execution, structured test generation and replay. Return raw observations; Python owns verification classification."
+  "description": "TypeScript browser lifecycle, action execution, structured test generation and replay. Return raw observations; Python owns verification classification.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "playwright": "1.63.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "typescript": "7.0.2"
+  }
 }

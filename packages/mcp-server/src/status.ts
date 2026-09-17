@@ -8,7 +8,7 @@ export const statusOutputSchema = z.strictObject({
   version: z.literal('0.0.0'),
   status: z.literal('ok'),
   transport: z.literal('stdio'),
-  capabilities: z.strictObject({ browserExecution: z.literal(false) }),
+  capabilities: z.strictObject({ browserExecution: z.literal(true) }),
 });
 
 export type ServerStatus = z.infer<typeof statusOutputSchema>;
@@ -20,6 +20,6 @@ export function getServerStatus(): ServerStatus {
     version: '0.0.0',
     status: 'ok',
     transport: 'stdio',
-    capabilities: { browserExecution: false },
+    capabilities: { browserExecution: true },
   });
 }

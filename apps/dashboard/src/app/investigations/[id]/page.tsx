@@ -1,16 +1,19 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Monitor, ScanLine } from 'lucide-react';
 import { PageHeader, PreviewNotice } from '@/components/page-header';
 import { WorkspaceTabs } from '@/components/workspace-tabs';
 import { sampleCase, sampleResultPath } from '@/lib/sample-case';
+import { getSampleCartScreenshot } from '@/lib/api';
 
 export const metadata: Metadata = { title: 'Sample workspace' };
 
 export default async function InvestigationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (id !== sampleCase.id) notFound();
+  const browserScreenshot = await getSampleCartScreenshot();
   return (
     <>
       <PageHeader
@@ -38,15 +41,30 @@ export default async function InvestigationPage({ params }: { params: Promise<{ 
             <h2>
               <Monitor size={16} /> Browser preview
             </h2>
-            <span className="muted-label">Disconnected</span>
+            <span className="muted-label">
+              {browserScreenshot.status === 'captured' ? 'Captured' : 'Unavailable'}
+            </span>
           </div>
-          <div className="browser-placeholder">
-            <ScanLine size={38} />
-            <h3>Waiting for a browser session</h3>
-            <p>Captured screenshots will appear here during an investigation.</p>
-          </div>
+          {browserScreenshot.status === 'captured' ? (
+            <div className="browser-capture">
+              <Image
+                alt={`Screenshot of ${browserScreenshot.screenshot.title}`}
+                height={900}
+                src={`data:${browserScreenshot.screenshot.contentType};base64,${browserScreenshot.screenshot.base64}`}
+                unoptimized
+                width={1280}
+              />
+              <p>Captured from {browserScreenshot.screenshot.url}</p>
+            </div>
+          ) : (
+            <div className="browser-placeholder">
+              <ScanLine size={38} />
+              <h3>Browser preview unavailable</h3>
+              <p>{browserScreenshot.error.safeMessage}</p>
+            </div>
+          )}
           <div className="panel-footnote">
-            No screenshot or browser evidence is available in this preview.
+            This is a fresh, bounded browser capture. Evidence retention arrives in Step 14.
           </div>
         </section>
       </div>

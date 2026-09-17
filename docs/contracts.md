@@ -1,6 +1,6 @@
 # Core contracts — proposed version 1
 
-Status: investigation contracts below remain design specifications. The Step 7 MCP status contract is implemented in [status.ts](../packages/mcp-server/src/status.ts) and documented in the [MCP package](../packages/mcp-server/README.md). Step 8 validates its camelCase version 1 response in Python through [status_client.py](../services/backend/src/reprosift/mcp/status_client.py): strict `schemaVersion`, service, transport, and `browserExecution=false`. During further implementation, owner schemas in the Python backend and packages/contracts-ts become authoritative; update this document with links rather than maintaining conflicting type copies.
+Status: investigation contracts below remain design specifications. The MCP status contract is implemented in [status.ts](../packages/mcp-server/src/status.ts), and Step 12 lifecycle input/output schemas are in [browser-tools.ts](../packages/mcp-server/src/browser-tools.ts). Python validates status and screenshot response boundaries through [status_client.py](../services/backend/src/reprosift/mcp/status_client.py) and [browser_client.py](../services/backend/src/reprosift/mcp/browser_client.py). During further implementation, owner schemas in the Python backend and packages/contracts-ts become authoritative; update this document with links rather than maintaining conflicting type copies.
 
 ## Shared conventions
 
@@ -50,7 +50,7 @@ Error: code, safeMessage, phase, retriable, correlationId. Example codes: INVALI
 
 POST investigation creates persisted work and returns an ID, not a synchronous browser result. GET status/events reads scoped persisted state. Cancel is idempotent. Replay creates a new replay ID for a fixed candidate. MCP tools validate arguments, enforce trusted context, and delegate; adapters must not leak Playwright/ORM objects into contracts.
 
-Step 9 adds `GET /mcp/status` as a dashboard diagnostic. It returns `200 { status: "connected", mcp: <validated MCP status> }` or `503 { status: "unavailable", error: { code: "MCP_UNAVAILABLE", safeMessage, phase } }`. It does not redefine `/health`: API liveness does not imply MCP readiness. The Next.js server validates this external response with Zod before rendering it; browser clients never call the MCP stdio process.
+Step 9 adds `GET /mcp/status` as a dashboard diagnostic. It returns `200 { status: "connected", mcp: <validated MCP status> }` or `503 { status: "unavailable", error: { code: "MCP_UNAVAILABLE", safeMessage, phase } }`. Step 12 adds `GET /browser/sample-cart/screenshot`, which returns a validated ephemeral PNG payload or a safe `503 BROWSER_UNAVAILABLE` lifecycle error. Neither route redefines `/health`; API liveness does not imply MCP or browser readiness. The Next.js server validates these external responses before rendering; browser clients never call the MCP stdio process.
 
 ## Hybrid implementation ownership
 
