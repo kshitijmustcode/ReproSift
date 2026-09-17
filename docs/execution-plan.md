@@ -1,12 +1,12 @@
 # Execution checklist
 
-Last updated: 2026-09-16.
+Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–10 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio, Python consumes it through a bounded, scoped client session, and the dashboard shows the FastAPI-owned connection state. A fresh-terminal guide documents the startup order and diagnostics. One root command checks both language stacks, including MCP integration tests. Steps 11–34 remain pending.
+Steps 1–11 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes a validated status tool over stdio, Python consumes it through a bounded, scoped client session, and the dashboard shows the FastAPI-owned connection state. The demo store now implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. A fresh-terminal guide documents the startup order and diagnostics. One root command checks both language stacks, including MCP integration tests. Steps 12–34 remain pending.
 
-**Next action: Step 11 — implement the sample cart.** Build the documented coupon scenario with seeded data and buggy/corrected variants. Read the sample case, verification rules and evaluation plan first. The first integration milestone is dashboard → FastAPI → Python MCP client → TypeScript MCP status tool. No LLM calls are needed for that milestone.
+**Next action: Step 12 — add browser lifecycle tools.** Implement scoped session creation, allowed navigation, screenshots and cleanup. The first browser integration milestone is Python → MCP → TypeScript browser lifecycle tools. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -71,7 +71,8 @@ Steps 1–10 are complete. Dashboard and demo-store page shells and the API heal
 
 ## Phase 2 — Build one browser workflow
 
-- [ ] **Step 11. Implement the sample cart**
+- [x] **Step 11. Implement the sample cart**
+  - Status: complete. `src/lib/cart.ts` owns seeded cent arithmetic and coupon state; the `/cart` client UI exposes stable controls and observable totals. Unit tests cover the initial state, coupon control, no-coupon control, buggy $85.00 observation and corrected $90.00 comparison. Local server configuration selects the corrected development comparison without displaying a variant label.
   - Work: Build the documented coupon scenario with seeded data and buggy/corrected variants.
   - Completion check: Manual reproduction gives the specified totals.
 
@@ -176,6 +177,8 @@ Steps 1–10 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-17 — Step 11 complete: implemented the seeded REQ-CART-001 cart fixture in `apps/demo-store`, with pure integer-cent totals, coupon application, resettable local state, and server-side local selection between buggy and corrected behavior. Focused cart/catalog tests (10 assertions), strict store typecheck, and production build passed. Browser verification confirmed the default buggy workflow ends at subtotal $100.00, discount $15.00 and total $85.00 after applying SAVE10 then removing Item B; corrected mode ends at $100.00, $10.00 and $90.00. Next: Step 12, add browser lifecycle tools.
 
 - 2026-09-16 — Step 7 committed as 0ce5290. Step 8 complete: added the official Python MCP SDK 2.2.0 and a scoped stdio adapter that launches the compiled Node entry point, initializes/calls with separate bounded timeouts, validates the camelCase version 1 response, and closes the session/child process through nested context managers. Sixteen Python tests passed, including a real cross-language call plus missing entry point, unavailable executable, timeout, and invalid response cases. Ruff and strict mypy passed. The existing Starlette deprecation warning remains. Step 8 changes are local. Next: Step 9, dashboard integration; no browser execution yet.
 

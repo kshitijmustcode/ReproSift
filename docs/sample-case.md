@@ -1,6 +1,6 @@
 # First vertical slice: stale coupon after removal
 
-Status: authored development fixture; no application implementation yet.
+Status: implemented local development fixture. Trusted reset, isolation and harness-owned variant selection arrive in Step 15.
 
 ## Requirement REQ-CART-001, version 1
 
@@ -17,7 +17,7 @@ A 10% coupon applies to the current merchandise subtotal after any cart change. 
 - Item B: quantity 1, unit price 5000 cents.
 - No coupon initially; subtotal and total 15000 cents.
 - Browser storage and backend state reset; locale en-US, currency USD.
-- Variant selected by the trusted harness, never by the agent.
+- Until Step 15, local developers may set the server-side `DEMO_STORE_VARIANT` environment variable to run the corrected comparison. The UI does not display a variant label. The trusted harness will select variants without agent access.
 
 ## Reproduction
 
