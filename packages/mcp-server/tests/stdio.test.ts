@@ -36,6 +36,10 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
   it('advertises the status tool with input and output contracts', async () => {
     const { tools } = await client.listTools({}, { timeout: 5000 });
     expect(tools.map((tool) => tool.name)).toEqual([
+      'inspect_browser_page',
+      'fill_browser_target',
+      'click_browser_target',
+      'select_browser_option',
       'get_status',
       'create_browser_session',
       'navigate_browser_session',

@@ -2,6 +2,41 @@ import { BrowserLifecycleError, BrowserSessionManager } from '@reprosift/browser
 import { z } from 'zod';
 
 const sessionIdSchema = z.uuid();
+const locatorSchema = z.discriminatedUnion('strategy', [
+  z.strictObject({
+    strategy: z.literal('role'),
+    role: z.enum(['button', 'combobox', 'link', 'textbox']),
+    name: z.string().min(1).max(256),
+  }),
+  z.strictObject({ strategy: z.literal('label'), label: z.string().min(1).max(256) }),
+  z.strictObject({ strategy: z.literal('test_id'), testId: z.string().min(1).max(256) }),
+]);
+const actionOutputSchema = z.strictObject({
+  sessionId: sessionIdSchema,
+  action: z.enum(['click', 'fill', 'select']),
+  url: z.string().url(),
+  title: z.string(),
+});
+
+export const inspectPageInputShape = { sessionId: sessionIdSchema };
+export const inspectPageOutputSchema = z.strictObject({
+  sessionId: sessionIdSchema,
+  url: z.string().url(),
+  title: z.string(),
+  visibleText: z.string().max(12_000),
+});
+export const clickInputShape = { sessionId: sessionIdSchema, target: locatorSchema };
+export const fillInputShape = {
+  sessionId: sessionIdSchema,
+  target: locatorSchema,
+  value: z.string().max(2_000),
+};
+export const selectInputShape = {
+  sessionId: sessionIdSchema,
+  target: locatorSchema,
+  value: z.string().min(1).max(2_000),
+};
+export const browserActionOutputSchema = actionOutputSchema;
 
 export const createBrowserSessionInputShape = {};
 export const createBrowserSessionInputSchema = z.strictObject(createBrowserSessionInputShape);

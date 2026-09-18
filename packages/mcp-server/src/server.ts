@@ -3,6 +3,8 @@ import { type BrowserSessionManager } from '@reprosift/browser-runner';
 import {
   browserToolFailure,
   browserToolSuccess,
+  browserActionOutputSchema,
+  clickInputShape,
   captureScreenshotInputShape,
   captureScreenshotOutputSchema,
   closeBrowserSessionInputShape,
@@ -10,8 +12,12 @@ import {
   createBrowserSessionInputShape,
   createBrowserSessionManager,
   createBrowserSessionOutputSchema,
+  fillInputShape,
+  inspectPageInputShape,
+  inspectPageOutputSchema,
   navigateBrowserSessionInputShape,
   navigateBrowserSessionOutputSchema,
+  selectInputShape,
 } from './browser-tools.js';
 import { getServerStatus, statusInputSchema, statusOutputSchema } from './status.js';
 
@@ -21,6 +27,94 @@ export function createServer(): McpServer {
 
 function createServerWithBrowserSessions(browserSessions: BrowserSessionManager): McpServer {
   const server = new McpServer({ name: 'reprosift-mcp', version: '0.0.0' });
+  server.registerTool(
+    'inspect_browser_page',
+    {
+      title: 'Inspect browser page',
+      description: 'Returns bounded visible text from an owned browser session.',
+      inputSchema: inspectPageInputShape,
+      outputSchema: inspectPageOutputSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId }) => {
+      try {
+        return browserToolSuccess(await browserSessions.inspectPage(sessionId));
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
+  server.registerTool(
+    'fill_browser_target',
+    {
+      title: 'Fill browser target',
+      description: 'Fills an exact supported locator in an owned browser session.',
+      inputSchema: fillInputShape,
+      outputSchema: browserActionOutputSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId, target, value }) => {
+      try {
+        return browserToolSuccess(await browserSessions.fill(sessionId, target, value));
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
+  server.registerTool(
+    'click_browser_target',
+    {
+      title: 'Click browser target',
+      description: 'Clicks an exact supported locator in an owned browser session.',
+      inputSchema: clickInputShape,
+      outputSchema: browserActionOutputSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId, target }) => {
+      try {
+        return browserToolSuccess(await browserSessions.click(sessionId, target));
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
+  server.registerTool(
+    'select_browser_option',
+    {
+      title: 'Select browser option',
+      description: 'Selects an option in an exact supported locator in an owned browser session.',
+      inputSchema: selectInputShape,
+      outputSchema: browserActionOutputSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId, target, value }) => {
+      try {
+        return browserToolSuccess(await browserSessions.select(sessionId, target, value));
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
   server.registerTool(
     'get_status',
     {

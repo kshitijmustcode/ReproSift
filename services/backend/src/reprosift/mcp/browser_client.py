@@ -24,13 +24,33 @@ class BrowserScreenshot(BaseModel):
     title: str
 
 
+class BrowserActionRun(BaseModel):
+    """Observed state after the scripted Step 13 cart interaction."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+
+    session_id: str = Field(alias="sessionId")
+    url: str
+    title: str
+    visible_text: str = Field(alias="visibleText")
+
+
 class BrowserScreenshotClientError(RuntimeError):
     """Safe failure for one bounded browser screenshot attempt."""
 
     def __init__(
         self,
         phase: Literal[
-            "connect", "create_session", "navigate", "screenshot", "close", "validate"
+            "connect",
+            "create_session",
+            "navigate",
+            "screenshot",
+            "close",
+            "inspect",
+            "fill",
+            "click",
+            "select",
+            "validate",
         ],
         message: str,
     ) -> None:
@@ -71,11 +91,91 @@ class BrowserScreenshotClient:
             args=[str(self._server_entrypoint)],
         )
         try:
-            async with asyncio.timeout(self._connect_timeout_seconds):
-                async with stdio_client(parameters) as (read_stream, write_stream):
-                    async with ClientSession(read_stream, write_stream) as session:
+            async with stdio_client(parameters) as (read_stream, write_stream):
+                async with ClientSession(read_stream, write_stream) as session:
+                    async with asyncio.timeout(self._connect_timeout_seconds):
                         await session.initialize()
-                        return await self._capture_cart_in_session(session)
+                    return await self._capture_cart_in_session(session)
+        except BrowserScreenshotClientError:
+            raise
+        except TimeoutError as error:
+            raise BrowserScreenshotClientError(
+                "connect", "Timed out while starting the browser MCP session."
+            ) from error
+
+    async def apply_coupon_and_remove_item_b(self) -> BrowserActionRun:
+        """Run the documented interactions without classifying the observed behavior."""
+        self._require_server_entrypoint()
+        parameters = StdioServerParameters(
+            command=self._node_command, args=[str(self._server_entrypoint)]
+        )
+        try:
+            async with stdio_client(parameters) as (read_stream, write_stream):
+                async with ClientSession(read_stream, write_stream) as session:
+                    async with asyncio.timeout(self._connect_timeout_seconds):
+                        await session.initialize()
+                    session_id = await self._create_session(session)
+                    try:
+                        await self._call(
+                            session,
+                            "navigate_browser_session",
+                            {"sessionId": session_id, "path": "/cart"},
+                            "navigate",
+                        )
+                        await self._call(
+                            session,
+                            "inspect_browser_page",
+                            {"sessionId": session_id},
+                            "inspect",
+                        )
+                        await self._call(
+                            session,
+                            "fill_browser_target",
+                            {
+                                "sessionId": session_id,
+                                "target": {
+                                    "strategy": "test_id",
+                                    "testId": "coupon-code",
+                                },
+                                "value": "SAVE10",
+                            },
+                            "fill",
+                        )
+                        await self._call(
+                            session,
+                            "click_browser_target",
+                            {
+                                "sessionId": session_id,
+                                "target": {
+                                    "strategy": "role",
+                                    "role": "button",
+                                    "name": "Apply",
+                                },
+                            },
+                            "click",
+                        )
+                        await self._call(
+                            session,
+                            "click_browser_target",
+                            {
+                                "sessionId": session_id,
+                                "target": {
+                                    "strategy": "role",
+                                    "role": "button",
+                                    "name": "Remove Item B",
+                                },
+                            },
+                            "click",
+                        )
+                        observation = await self._call(
+                            session,
+                            "inspect_browser_page",
+                            {"sessionId": session_id},
+                            "inspect",
+                        )
+                        return self._validate_action_run(observation)
+                    finally:
+                        await self._close_session(session, session_id)
         except BrowserScreenshotClientError:
             raise
         except TimeoutError as error:
@@ -125,8 +225,17 @@ class BrowserScreenshotClient:
         self,
         session: ClientSession,
         tool_name: str,
-        arguments: dict[str, str],
-        phase: Literal["create_session", "navigate", "screenshot", "close"],
+        arguments: dict[str, Any],
+        phase: Literal[
+            "create_session",
+            "navigate",
+            "screenshot",
+            "close",
+            "inspect",
+            "fill",
+            "click",
+            "select",
+        ],
     ) -> Any:
         try:
             async with asyncio.timeout(self._call_timeout_seconds):
@@ -144,6 +253,15 @@ class BrowserScreenshotClient:
                 phase, f"Browser {phase} returned an error."
             )
         return result.structured_content
+
+    @staticmethod
+    def _validate_action_run(content: Any) -> BrowserActionRun:
+        try:
+            return BrowserActionRun.model_validate(content)
+        except ValidationError as error:
+            raise BrowserScreenshotClientError(
+                "validate", "The browser inspection response was invalid."
+            ) from error
 
     @staticmethod
     def _validate_screenshot(screenshot: Any, navigation: Any) -> BrowserScreenshot:

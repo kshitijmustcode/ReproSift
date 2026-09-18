@@ -90,6 +90,7 @@ export function CartExperience({ variant }: CartExperienceProps) {
             Coupon code
             <span className="coupon-input-row">
               <input
+                data-testid="coupon-code"
                 id="coupon-code"
                 onChange={(event) => setCouponCode(event.target.value)}
                 placeholder="SAVE10"

@@ -81,7 +81,8 @@ Steps 1–12 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Implement scoped session creation, allowed navigation, screenshots and cleanup.
   - Completion check: Python requests a screenshot through MCP and the UI displays it.
 
-- [ ] **Step 13. Add browser actions**
+- [x] **Step 13. Add browser actions**
+  - Status: complete. The MCP server provides bounded visible-text inspection and exact role/name, label, or test-id click/fill/select actions. Python executes the canonical coupon-and-remove sequence through those tools and validates its returned observation without classifying a defect.
   - Work: Implement page inspection, click, fill and select with runtime validation.
   - Completion check: A scripted sequence applies the coupon and removes an item.
 
@@ -178,6 +179,8 @@ Steps 1–12 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-18 — Step 13 complete: added validated inspect, click, fill and select MCP tools backed by Playwright locators. The Python client owns a scripted cart sequence and preserves browser cleanup. Real local execution applied SAVE10, removed Item B, and observed the buggy $85.00 total. Next: Step 14, capture evidence.
 
 - 2026-09-17 — Step 12 complete: added a Playwright Chromium lifecycle adapter with UUID session ownership, allowed-relative-path navigation, in-memory PNG capture and explicit context/browser cleanup. The TypeScript MCP server exposes lifecycle tools; Python owns their bounded create → navigate → screenshot → close sequence; FastAPI validates and serves an ephemeral capture; the sample dashboard workspace renders it. Browser verification confirmed the screenshot is shown. `pnpm check` passed with 26 TypeScript and 20 Python tests; the existing Starlette deprecation warning remains. Next: Step 13, add browser actions.
 

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
+import { chromium, type Browser, type BrowserContext, type Locator, type Page } from 'playwright';
 
 export type BrowserLifecycleErrorCode =
   'SESSION_NOT_FOUND' | 'TARGET_NOT_ALLOWED' | 'BROWSER_OPERATION_FAILED';
@@ -31,6 +31,29 @@ export type BrowserScreenshot = Readonly<{
   contentType: 'image/png';
   base64: string;
   capturedAt: string;
+}>;
+
+export type BrowserLocator =
+  | Readonly<{
+      strategy: 'role';
+      role: 'button' | 'combobox' | 'link' | 'textbox';
+      name: string;
+    }>
+  | Readonly<{ strategy: 'label'; label: string }>
+  | Readonly<{ strategy: 'test_id'; testId: string }>;
+
+export type BrowserPageInspection = Readonly<{
+  sessionId: string;
+  url: string;
+  title: string;
+  visibleText: string;
+}>;
+
+export type BrowserActionResult = Readonly<{
+  sessionId: string;
+  action: 'click' | 'fill' | 'select';
+  url: string;
+  title: string;
 }>;
 
 type ManagedSession = Readonly<{
@@ -109,6 +132,76 @@ export class BrowserSessionManager {
     }
   }
 
+  async inspectPage(sessionId: string): Promise<BrowserPageInspection> {
+    const session = this.requireSession(sessionId);
+    try {
+      return {
+        sessionId,
+        url: session.page.url(),
+        title: await session.page.title(),
+        visibleText: (await session.page.locator('body').innerText()).slice(0, 12_000),
+      };
+    } catch (error) {
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not inspect the browser page: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
+  async click(sessionId: string, target: BrowserLocator): Promise<BrowserActionResult> {
+    const session = this.requireSession(sessionId);
+    try {
+      await this.resolveLocator(session.page, target).click({
+        timeout: this.options.navigationTimeoutMs,
+      });
+      return this.actionResult(sessionId, 'click', session.page);
+    } catch (error) {
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not click the browser target: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
+  async fill(
+    sessionId: string,
+    target: BrowserLocator,
+    value: string,
+  ): Promise<BrowserActionResult> {
+    const session = this.requireSession(sessionId);
+    try {
+      await this.resolveLocator(session.page, target).fill(value, {
+        timeout: this.options.navigationTimeoutMs,
+      });
+      return this.actionResult(sessionId, 'fill', session.page);
+    } catch (error) {
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not fill the browser target: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
+  async select(
+    sessionId: string,
+    target: BrowserLocator,
+    value: string,
+  ): Promise<BrowserActionResult> {
+    const session = this.requireSession(sessionId);
+    try {
+      await this.resolveLocator(session.page, target).selectOption(value, {
+        timeout: this.options.navigationTimeoutMs,
+      });
+      return this.actionResult(sessionId, 'select', session.page);
+    } catch (error) {
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not select the browser target: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     const session = this.requireSession(sessionId);
     this.sessions.delete(sessionId);
@@ -134,6 +227,25 @@ export class BrowserSessionManager {
       throw new BrowserLifecycleError('SESSION_NOT_FOUND', 'The browser session is unavailable.');
     }
     return session;
+  }
+
+  private resolveLocator(page: Page, target: BrowserLocator): Locator {
+    switch (target.strategy) {
+      case 'role':
+        return page.getByRole(target.role, { exact: true, name: target.name });
+      case 'label':
+        return page.getByLabel(target.label, { exact: true });
+      case 'test_id':
+        return page.getByTestId(target.testId);
+    }
+  }
+
+  private async actionResult(
+    sessionId: string,
+    action: BrowserActionResult['action'],
+    page: Page,
+  ): Promise<BrowserActionResult> {
+    return { sessionId, action, url: page.url(), title: await page.title() };
   }
 
   private resolveAllowedUrl(relativePath: string): string {

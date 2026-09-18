@@ -11,4 +11,4 @@ pnpm build:mcp
 pnpm --filter @reprosift/browser-runner exec playwright install chromium
 ```
 
-The Chromium installation is a local development prerequisite, not a committed artifact. Step 13 adds validated browser actions; Step 14 adds retained evidence.
+The Chromium installation is a local development prerequisite, not a committed artifact. Step 13 adds bounded visible-text inspection plus exact role/name, label, and test-id click/fill/select actions. Step 14 adds retained evidence.

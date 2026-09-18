@@ -36,6 +36,8 @@ The text content contains the same JSON for clients that consume text results. `
 
 `create_browser_session`, `navigate_browser_session`, `capture_screenshot`, and `close_browser_session` are the Step 12 lifecycle tools. Navigation accepts only an owned session ID and an allowed relative path; `capture_screenshot` returns an in-memory PNG payload. The Python client owns the short-lived MCP process and always closes the created browser session in a `finally` block. Artifact persistence and browser actions arrive in later steps.
 
+Step 13 adds `inspect_browser_page`, `fill_browser_target`, `click_browser_target`, and `select_browser_option`. Locators are constrained to exact role/name, label, or test ID; arbitrary CSS selectors and JavaScript execution are not available.
+
 `src/status.ts` owns the version 1 Zod input/output schemas and inferred type. `src/server.ts` registers the schemas and delegates to the status function. `src/cli.ts` owns stdio startup/shutdown. `src/smoke.ts` is a development diagnostic, not the Python application client. Keep the status contract here while it has one implementation; Step 8 validates the wire response in Python and adds shared compatibility examples.
 
 ## Checks
