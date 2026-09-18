@@ -67,6 +67,9 @@ export const navigateBrowserSessionOutputSchema = z.strictObject({
   title: z.string(),
 });
 
+export const resetBrowserSessionInputShape = navigateBrowserSessionInputShape;
+export const resetBrowserSessionOutputSchema = navigateBrowserSessionOutputSchema;
+
 export const captureScreenshotInputShape = { sessionId: sessionIdSchema };
 export const captureScreenshotInputSchema = z.strictObject(captureScreenshotInputShape);
 export const captureScreenshotOutputSchema = z.strictObject({
@@ -111,5 +114,6 @@ export function createBrowserSessionManager(): BrowserSessionManager {
     allowedBaseUrl,
     navigationTimeoutMs: 10_000,
     screenshotTimeoutMs: 10_000,
+    maxActions: 12,
   });
 }

@@ -8,4 +8,5 @@ export {
   type BrowserPageInspection,
   type BrowserSessionManagerOptions,
   type BrowserSessionNavigation,
+  type BrowserSessionReset,
 } from './session.js';

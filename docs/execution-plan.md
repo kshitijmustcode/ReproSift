@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–14 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, and ephemeral evidence tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 15–34 remain pending.
+Steps 1–15 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 16–34 remain pending.
 
-**Next action: Step 15 — add reset and isolation.** Reset the demo fixture and enforce a clean browser context for every run. No LLM calls are needed for that milestone.
+**Next action: Step 16 — add persistence.** Set up PostgreSQL, migrations, investigations, attempts, events, and artifact metadata. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -91,7 +91,8 @@ Steps 1–14 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Record action results, console/network events, screenshots and artifact references.
   - Completion check: Sample workflow produces inspectable evidence.
 
-- [ ] **Step 15. Add reset and isolation**
+- [x] **Step 15. Add reset and isolation**
+  - Status: complete. Every MCP session creates a fresh Playwright context. The reset tool clears cookies, local storage, and session storage before reloading the seeded cart route; Python calls it before the canonical workflow. Navigation and mutating actions have a 12-command cap. The current demo fixture is client-only, so there is no backend cart state before Step 16.
   - Work: Reset backend and browser state; enforce allowed targets and execution limits.
   - Completion check: Repeated runs start identically and release resources.
 
@@ -180,6 +181,8 @@ Steps 1–14 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-18 — Step 15 complete: added the idempotent `reset_browser_session` MCP tool, which clears cookies and browser storage then reloads the allowed seeded route. The Python workflow resets before acting; two real executions produced the same reset/fill/click/click action sequence with distinct browser session IDs. Browser sessions already use isolated contexts and now cap navigation/reset/click/fill/select operations at 12 commands. The cart remains a stateless client fixture until persistence exists. Next: Step 16, persistence.
 
 - 2026-09-18 — Step 14 complete: added `collect_browser_evidence` to the TypeScript MCP server. It returns an opaque ephemeral artifact ID, screenshot, actions, console messages, and same-origin request metadata from the owned Playwright session. The Python client validates that contract after the canonical coupon-and-remove workflow and releases the session. Durable retention remains Step 16; this step records observations without inferring a defect. Next: Step 15, reset and isolation.
 

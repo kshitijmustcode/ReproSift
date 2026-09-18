@@ -68,6 +68,7 @@ class BrowserScreenshotClientError(RuntimeError):
             "connect",
             "create_session",
             "navigate",
+            "reset",
             "screenshot",
             "close",
             "inspect",
@@ -142,9 +143,9 @@ class BrowserScreenshotClient:
                     try:
                         await self._call(
                             session,
-                            "navigate_browser_session",
+                            "reset_browser_session",
                             {"sessionId": session_id, "path": "/cart"},
-                            "navigate",
+                            "reset",
                         )
                         await self._call(
                             session,
@@ -259,6 +260,7 @@ class BrowserScreenshotClient:
         phase: Literal[
             "create_session",
             "navigate",
+            "reset",
             "screenshot",
             "close",
             "inspect",

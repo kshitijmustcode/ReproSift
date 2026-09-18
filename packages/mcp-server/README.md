@@ -40,6 +40,8 @@ Step 13 adds `inspect_browser_page`, `fill_browser_target`, `click_browser_targe
 
 Step 14 adds `collect_browser_evidence`. It returns an opaque ephemeral artifact ID, a PNG screenshot, recorded browser actions, console messages, and same-origin request method/path metadata. It does not persist evidence or classify a verification outcome.
 
+Step 15 adds `reset_browser_session`. It clears cookies and browser storage, then reloads an allowed seeded route. Browser sessions use a fresh Playwright context and have a 12-action cap; the demo fixture has no backend cart state yet.
+
 `src/status.ts` owns the version 1 Zod input/output schemas and inferred type. `src/server.ts` registers the schemas and delegates to the status function. `src/cli.ts` owns stdio startup/shutdown. `src/smoke.ts` is a development diagnostic, not the Python application client. Keep the status contract here while it has one implementation; Step 8 validates the wire response in Python and adds shared compatibility examples.
 
 ## Checks

@@ -2,7 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { chromium, type Browser, type BrowserContext, type Locator, type Page } from 'playwright';
 
 export type BrowserLifecycleErrorCode =
-  'SESSION_NOT_FOUND' | 'TARGET_NOT_ALLOWED' | 'BROWSER_OPERATION_FAILED';
+  | 'SESSION_NOT_FOUND'
+  | 'TARGET_NOT_ALLOWED'
+  | 'EXECUTION_LIMIT_REACHED'
+  | 'BROWSER_OPERATION_FAILED';
 
 export class BrowserLifecycleError extends Error {
   constructor(
@@ -18,6 +21,7 @@ export type BrowserSessionManagerOptions = Readonly<{
   allowedBaseUrl: string;
   navigationTimeoutMs: number;
   screenshotTimeoutMs: number;
+  maxActions: number;
 }>;
 
 export type BrowserSessionNavigation = Readonly<{
@@ -25,6 +29,8 @@ export type BrowserSessionNavigation = Readonly<{
   url: string;
   title: string;
 }>;
+
+export type BrowserSessionReset = BrowserSessionNavigation;
 
 export type BrowserScreenshot = Readonly<{
   sessionId: string;
@@ -114,6 +120,7 @@ export class BrowserSessionManager {
       });
       return sessionId;
     } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
       throw new BrowserLifecycleError(
         'BROWSER_OPERATION_FAILED',
         `Could not create a browser session: ${this.safeErrorMessage(error)}`,
@@ -126,6 +133,7 @@ export class BrowserSessionManager {
     const targetUrl = this.resolveAllowedUrl(relativePath);
 
     try {
+      this.assertActionBudget(session);
       await session.page.goto(targetUrl, {
         timeout: this.options.navigationTimeoutMs,
         waitUntil: 'domcontentloaded',
@@ -133,9 +141,40 @@ export class BrowserSessionManager {
       session.actions.push(`navigate ${relativePath}`);
       return { sessionId, url: session.page.url(), title: await session.page.title() };
     } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
       throw new BrowserLifecycleError(
         'BROWSER_OPERATION_FAILED',
         `Could not navigate the browser session: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
+  async resetSession(sessionId: string, relativePath: string): Promise<BrowserSessionReset> {
+    const session = this.requireSession(sessionId);
+    const targetUrl = this.resolveAllowedUrl(relativePath);
+
+    try {
+      this.assertActionBudget(session);
+      await session.context.clearCookies();
+      await session.page.goto(targetUrl, {
+        timeout: this.options.navigationTimeoutMs,
+        waitUntil: 'domcontentloaded',
+      });
+      await session.page.evaluate(() => {
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+      });
+      await session.page.reload({
+        timeout: this.options.navigationTimeoutMs,
+        waitUntil: 'domcontentloaded',
+      });
+      session.actions.push(`reset ${relativePath}`);
+      return { sessionId, url: session.page.url(), title: await session.page.title() };
+    } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not reset the browser session: ${this.safeErrorMessage(error)}`,
       );
     }
   }
@@ -154,6 +193,7 @@ export class BrowserSessionManager {
         capturedAt: new Date().toISOString(),
       };
     } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
       throw new BrowserLifecycleError(
         'BROWSER_OPERATION_FAILED',
         `Could not capture the browser screenshot: ${this.safeErrorMessage(error)}`,
@@ -184,6 +224,7 @@ export class BrowserSessionManager {
         visibleText: (await session.page.locator('body').innerText()).slice(0, 12_000),
       };
     } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
       throw new BrowserLifecycleError(
         'BROWSER_OPERATION_FAILED',
         `Could not inspect the browser page: ${this.safeErrorMessage(error)}`,
@@ -194,6 +235,7 @@ export class BrowserSessionManager {
   async click(sessionId: string, target: BrowserLocator): Promise<BrowserActionResult> {
     const session = this.requireSession(sessionId);
     try {
+      this.assertActionBudget(session);
       await this.resolveLocator(session.page, target).click({
         timeout: this.options.navigationTimeoutMs,
       });
@@ -214,6 +256,7 @@ export class BrowserSessionManager {
   ): Promise<BrowserActionResult> {
     const session = this.requireSession(sessionId);
     try {
+      this.assertActionBudget(session);
       await this.resolveLocator(session.page, target).fill(value, {
         timeout: this.options.navigationTimeoutMs,
       });
@@ -234,6 +277,7 @@ export class BrowserSessionManager {
   ): Promise<BrowserActionResult> {
     const session = this.requireSession(sessionId);
     try {
+      this.assertActionBudget(session);
       await this.resolveLocator(session.page, target).selectOption(value, {
         timeout: this.options.navigationTimeoutMs,
       });
@@ -272,6 +316,15 @@ export class BrowserSessionManager {
       throw new BrowserLifecycleError('SESSION_NOT_FOUND', 'The browser session is unavailable.');
     }
     return session;
+  }
+
+  private assertActionBudget(session: ManagedSession): void {
+    if (session.actions.length >= this.options.maxActions) {
+      throw new BrowserLifecycleError(
+        'EXECUTION_LIMIT_REACHED',
+        `Browser session exceeded its ${this.options.maxActions}-action limit.`,
+      );
+    }
   }
 
   private resolveLocator(page: Page, target: BrowserLocator): Locator {

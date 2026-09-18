@@ -19,6 +19,8 @@ import {
   inspectPageOutputSchema,
   navigateBrowserSessionInputShape,
   navigateBrowserSessionOutputSchema,
+  resetBrowserSessionInputShape,
+  resetBrowserSessionOutputSchema,
   selectInputShape,
 } from './browser-tools.js';
 import { getServerStatus, statusInputSchema, statusOutputSchema } from './status.js';
@@ -204,6 +206,29 @@ function createServerWithBrowserSessions(browserSessions: BrowserSessionManager)
       try {
         const output = await browserSessions.navigate(sessionId, path);
         return browserToolSuccess(output);
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
+  server.registerTool(
+    'reset_browser_session',
+    {
+      title: 'Reset browser session',
+      description:
+        'Clears browser storage and cookies, then reloads an allowed demo-store path from its seeded state.',
+      inputSchema: resetBrowserSessionInputShape,
+      outputSchema: resetBrowserSessionOutputSchema,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId, path }) => {
+      try {
+        return browserToolSuccess(await browserSessions.resetSession(sessionId, path));
       } catch (error) {
         return browserToolFailure(error);
       }

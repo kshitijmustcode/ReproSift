@@ -44,6 +44,7 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
       'get_status',
       'create_browser_session',
       'navigate_browser_session',
+      'reset_browser_session',
       'capture_screenshot',
       'close_browser_session',
     ]);
@@ -56,6 +57,10 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
     expect(tools.find((tool) => tool.name === 'navigate_browser_session')).toMatchObject({
       inputSchema: { type: 'object', required: ['sessionId', 'path'] },
       annotations: { openWorldHint: false },
+    });
+    expect(tools.find((tool) => tool.name === 'reset_browser_session')).toMatchObject({
+      inputSchema: { type: 'object', required: ['sessionId', 'path'] },
+      annotations: { destructiveHint: true, idempotentHint: true, openWorldHint: false },
     });
     expect(tools.find((tool) => tool.name === 'collect_browser_evidence')).toMatchObject({
       inputSchema: { type: 'object', required: ['sessionId'] },
