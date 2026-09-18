@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–9 are complete. Next: Step 10, document startup.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–14 are complete. Next: Step 15, reset and isolation.
 
 Read these before implementing the relevant feature:
 

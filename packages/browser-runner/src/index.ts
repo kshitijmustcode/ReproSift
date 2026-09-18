@@ -3,6 +3,7 @@ export {
   BrowserSessionManager,
   type BrowserScreenshot,
   type BrowserActionResult,
+  type BrowserEvidence,
   type BrowserLocator,
   type BrowserPageInspection,
   type BrowserSessionManagerOptions,

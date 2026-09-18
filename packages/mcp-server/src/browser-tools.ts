@@ -37,6 +37,20 @@ export const selectInputShape = {
   value: z.string().min(1).max(2_000),
 };
 export const browserActionOutputSchema = actionOutputSchema;
+export const collectEvidenceInputShape = { sessionId: sessionIdSchema };
+export const collectEvidenceOutputSchema = z.strictObject({
+  artifactId: z.uuid(),
+  sessionId: sessionIdSchema,
+  screenshot: z.strictObject({
+    sessionId: sessionIdSchema,
+    contentType: z.literal('image/png'),
+    base64: z.string().min(1),
+    capturedAt: z.iso.datetime(),
+  }),
+  actions: z.array(z.string()),
+  consoleMessages: z.array(z.string()),
+  networkRequests: z.array(z.string()),
+});
 
 export const createBrowserSessionInputShape = {};
 export const createBrowserSessionInputSchema = z.strictObject(createBrowserSessionInputShape);

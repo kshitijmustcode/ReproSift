@@ -56,10 +56,22 @@ export type BrowserActionResult = Readonly<{
   title: string;
 }>;
 
+export type BrowserEvidence = Readonly<{
+  artifactId: string;
+  sessionId: string;
+  screenshot: BrowserScreenshot;
+  actions: readonly string[];
+  consoleMessages: readonly string[];
+  networkRequests: readonly string[];
+}>;
+
 type ManagedSession = Readonly<{
   browser: Browser;
   context: BrowserContext;
   page: Page;
+  actions: string[];
+  consoleMessages: string[];
+  networkRequests: string[];
 }>;
 
 export class BrowserSessionManager {
@@ -83,7 +95,23 @@ export class BrowserSessionManager {
       });
       const page = await context.newPage();
       const sessionId = randomUUID();
-      this.sessions.set(sessionId, { browser, context, page });
+      const actions: string[] = [];
+      const consoleMessages: string[] = [];
+      const networkRequests: string[] = [];
+      page.on('console', (message) => consoleMessages.push(`${message.type()}: ${message.text()}`));
+      page.on('request', (request) => {
+        const url = new URL(request.url());
+        if (url.origin === this.allowedOrigin)
+          networkRequests.push(`${request.method()} ${url.pathname}`);
+      });
+      this.sessions.set(sessionId, {
+        browser,
+        context,
+        page,
+        actions,
+        consoleMessages,
+        networkRequests,
+      });
       return sessionId;
     } catch (error) {
       throw new BrowserLifecycleError(
@@ -102,6 +130,7 @@ export class BrowserSessionManager {
         timeout: this.options.navigationTimeoutMs,
         waitUntil: 'domcontentloaded',
       });
+      session.actions.push(`navigate ${relativePath}`);
       return { sessionId, url: session.page.url(), title: await session.page.title() };
     } catch (error) {
       throw new BrowserLifecycleError(
@@ -132,6 +161,19 @@ export class BrowserSessionManager {
     }
   }
 
+  async collectEvidence(sessionId: string): Promise<BrowserEvidence> {
+    const session = this.requireSession(sessionId);
+    const screenshot = await this.captureScreenshot(sessionId);
+    return {
+      artifactId: randomUUID(),
+      sessionId,
+      screenshot,
+      actions: [...session.actions],
+      consoleMessages: [...session.consoleMessages],
+      networkRequests: [...session.networkRequests],
+    };
+  }
+
   async inspectPage(sessionId: string): Promise<BrowserPageInspection> {
     const session = this.requireSession(sessionId);
     try {
@@ -155,6 +197,7 @@ export class BrowserSessionManager {
       await this.resolveLocator(session.page, target).click({
         timeout: this.options.navigationTimeoutMs,
       });
+      session.actions.push(`click ${target.strategy}`);
       return this.actionResult(sessionId, 'click', session.page);
     } catch (error) {
       throw new BrowserLifecycleError(
@@ -174,6 +217,7 @@ export class BrowserSessionManager {
       await this.resolveLocator(session.page, target).fill(value, {
         timeout: this.options.navigationTimeoutMs,
       });
+      session.actions.push(`fill ${target.strategy}`);
       return this.actionResult(sessionId, 'fill', session.page);
     } catch (error) {
       throw new BrowserLifecycleError(
@@ -193,6 +237,7 @@ export class BrowserSessionManager {
       await this.resolveLocator(session.page, target).selectOption(value, {
         timeout: this.options.navigationTimeoutMs,
       });
+      session.actions.push(`select ${target.strategy}`);
       return this.actionResult(sessionId, 'select', session.page);
     } catch (error) {
       throw new BrowserLifecycleError(

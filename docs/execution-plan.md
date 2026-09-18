@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–12 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status and browser lifecycle tools over stdio; Python owns a fresh process/session to capture the allowed cart route, and the dashboard renders the returned screenshot. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 13–34 remain pending.
+Steps 1–14 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, and ephemeral evidence tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 15–34 remain pending.
 
-**Next action: Step 13 — add browser actions.** Implement page inspection, click, fill and select with runtime validation. No LLM calls are needed for that milestone.
+**Next action: Step 15 — add reset and isolation.** Reset the demo fixture and enforce a clean browser context for every run. No LLM calls are needed for that milestone.
 
 ## How to use this plan
 
@@ -86,7 +86,8 @@ Steps 1–12 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Implement page inspection, click, fill and select with runtime validation.
   - Completion check: A scripted sequence applies the coupon and removes an item.
 
-- [ ] **Step 14. Capture evidence**
+- [x] **Step 14. Capture evidence**
+  - Status: complete. The browser MCP server emits an opaque ephemeral artifact ID, in-memory PNG screenshot, action log, console messages, and same-origin request method/path metadata. The Python client validates the evidence after the canonical cart workflow and never classifies the observed behavior.
   - Work: Record action results, console/network events, screenshots and artifact references.
   - Completion check: Sample workflow produces inspectable evidence.
 
@@ -179,6 +180,8 @@ Steps 1–12 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-18 — Step 14 complete: added `collect_browser_evidence` to the TypeScript MCP server. It returns an opaque ephemeral artifact ID, screenshot, actions, console messages, and same-origin request metadata from the owned Playwright session. The Python client validates that contract after the canonical coupon-and-remove workflow and releases the session. Durable retention remains Step 16; this step records observations without inferring a defect. Next: Step 15, reset and isolation.
 
 - 2026-09-18 — Step 13 complete: added validated inspect, click, fill and select MCP tools backed by Playwright locators. The Python client owns a scripted cart sequence and preserves browser cleanup. Real local execution applied SAVE10, removed Item B, and observed the buggy $85.00 total. Next: Step 14, capture evidence.
 

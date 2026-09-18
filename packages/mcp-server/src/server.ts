@@ -4,6 +4,8 @@ import {
   browserToolFailure,
   browserToolSuccess,
   browserActionOutputSchema,
+  collectEvidenceInputShape,
+  collectEvidenceOutputSchema,
   clickInputShape,
   captureScreenshotInputShape,
   captureScreenshotOutputSchema,
@@ -27,6 +29,29 @@ export function createServer(): McpServer {
 
 function createServerWithBrowserSessions(browserSessions: BrowserSessionManager): McpServer {
   const server = new McpServer({ name: 'reprosift-mcp', version: '0.0.0' });
+  server.registerTool(
+    'collect_browser_evidence',
+    {
+      title: 'Collect browser evidence',
+      description:
+        'Returns in-memory screenshot, action, console, and same-origin network evidence.',
+      inputSchema: collectEvidenceInputShape,
+      outputSchema: collectEvidenceOutputSchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ sessionId }) => {
+      try {
+        return browserToolSuccess(await browserSessions.collectEvidence(sessionId));
+      } catch (error) {
+        return browserToolFailure(error);
+      }
+    },
+  );
   server.registerTool(
     'inspect_browser_page',
     {

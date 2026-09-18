@@ -35,6 +35,30 @@ class BrowserActionRun(BaseModel):
     visible_text: str = Field(alias="visibleText")
 
 
+class BrowserWorkflowEvidence(BaseModel):
+    """Ephemeral evidence returned by the Step 14 scripted workflow."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+
+    artifact_id: str = Field(alias="artifactId")
+    session_id: str = Field(alias="sessionId")
+    actions: tuple[str, ...]
+    console_messages: tuple[str, ...] = Field(alias="consoleMessages")
+    network_requests: tuple[str, ...] = Field(alias="networkRequests")
+    screenshot: "BrowserEvidenceScreenshot"
+
+
+class BrowserEvidenceScreenshot(BaseModel):
+    """Screenshot artifact retained only for the lifetime of one workflow."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+
+    session_id: str = Field(alias="sessionId")
+    content_type: Literal["image/png"] = Field(alias="contentType")
+    base64: str = Field(min_length=1)
+    captured_at: str = Field(alias="capturedAt")
+
+
 class BrowserScreenshotClientError(RuntimeError):
     """Safe failure for one bounded browser screenshot attempt."""
 
@@ -103,7 +127,7 @@ class BrowserScreenshotClient:
                 "connect", "Timed out while starting the browser MCP session."
             ) from error
 
-    async def apply_coupon_and_remove_item_b(self) -> BrowserActionRun:
+    async def apply_coupon_and_remove_item_b(self) -> BrowserWorkflowEvidence:
         """Run the documented interactions without classifying the observed behavior."""
         self._require_server_entrypoint()
         parameters = StdioServerParameters(
@@ -167,13 +191,19 @@ class BrowserScreenshotClient:
                             },
                             "click",
                         )
-                        observation = await self._call(
+                        await self._call(
                             session,
                             "inspect_browser_page",
                             {"sessionId": session_id},
                             "inspect",
                         )
-                        return self._validate_action_run(observation)
+                        evidence = await self._call(
+                            session,
+                            "collect_browser_evidence",
+                            {"sessionId": session_id},
+                            "screenshot",
+                        )
+                        return self._validate_workflow_evidence(evidence)
                     finally:
                         await self._close_session(session, session_id)
         except BrowserScreenshotClientError:
@@ -261,6 +291,15 @@ class BrowserScreenshotClient:
         except ValidationError as error:
             raise BrowserScreenshotClientError(
                 "validate", "The browser inspection response was invalid."
+            ) from error
+
+    @staticmethod
+    def _validate_workflow_evidence(content: Any) -> BrowserWorkflowEvidence:
+        try:
+            return BrowserWorkflowEvidence.model_validate(content)
+        except ValidationError as error:
+            raise BrowserScreenshotClientError(
+                "validate", "The browser evidence response was invalid."
             ) from error
 
     @staticmethod

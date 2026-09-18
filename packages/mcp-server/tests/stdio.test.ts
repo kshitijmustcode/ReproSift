@@ -36,6 +36,7 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
   it('advertises the status tool with input and output contracts', async () => {
     const { tools } = await client.listTools({}, { timeout: 5000 });
     expect(tools.map((tool) => tool.name)).toEqual([
+      'collect_browser_evidence',
       'inspect_browser_page',
       'fill_browser_target',
       'click_browser_target',
@@ -55,6 +56,21 @@ describe.each(['legacy', 'auto'] as const)('MCP over a real stdio process (%s)',
     expect(tools.find((tool) => tool.name === 'navigate_browser_session')).toMatchObject({
       inputSchema: { type: 'object', required: ['sessionId', 'path'] },
       annotations: { openWorldHint: false },
+    });
+    expect(tools.find((tool) => tool.name === 'collect_browser_evidence')).toMatchObject({
+      inputSchema: { type: 'object', required: ['sessionId'] },
+      outputSchema: {
+        type: 'object',
+        required: [
+          'artifactId',
+          'sessionId',
+          'screenshot',
+          'actions',
+          'consoleMessages',
+          'networkRequests',
+        ],
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     });
   });
 
