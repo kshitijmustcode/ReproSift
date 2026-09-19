@@ -4,18 +4,25 @@ from fastapi import FastAPI
 
 from reprosift.config import Settings, load_settings
 from reprosift.health import router as health_router
+from reprosift.investigation_route import (
+    InvestigationReader,
+    create_investigation_router,
+)
 from reprosift.mcp import BrowserScreenshotClient, McpStatusClient
 from reprosift.mcp.browser_route import (
     BrowserScreenshotReader,
     create_browser_screenshot_router,
 )
 from reprosift.mcp.status_route import McpStatusReader, create_mcp_status_router
+from reprosift.persistence import Database, InvestigationRepository
+from reprosift.persistence.models import Base
 
 
 def create_app(
     settings: Settings | None = None,
     mcp_status_reader: McpStatusReader | None = None,
     browser_screenshot_reader: BrowserScreenshotReader | None = None,
+    investigation_reader: InvestigationReader | None = None,
 ) -> FastAPI:
     configuration = settings if settings is not None else load_settings()
     app = FastAPI(
@@ -39,4 +46,9 @@ def create_app(
         else BrowserScreenshotClient.from_settings(configuration)
     )
     app.include_router(create_browser_screenshot_router(screenshot_reader))
+    if investigation_reader is None:
+        database = Database(configuration.database_url)
+        Base.metadata.create_all(database.engine)
+        investigation_reader = InvestigationRepository(database)
+    app.include_router(create_investigation_router(investigation_reader))
     return app

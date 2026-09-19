@@ -96,6 +96,15 @@ class InvestigationRepository:
             row = session.get(InvestigationRow, investigation_id)
             return _investigation_from_row(row) if row is not None else None
 
+    def cancel_investigation(self, investigation_id: str) -> Investigation | None:
+        with self._database.session() as session:
+            row = session.get(InvestigationRow, investigation_id)
+            if row is None:
+                return None
+            if row.status not in {"completed", "failed", "cancelled"}:
+                row.status = InvestigationStatus.CANCELLED.value
+            return _investigation_from_row(row)
+
     def create_attempt(
         self, *, investigation_id: str, deadline_at: datetime, limits: JsonObject
     ) -> Attempt:
