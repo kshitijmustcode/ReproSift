@@ -7,6 +7,18 @@ import { sampleCase, sampleWorkspacePath } from '@/lib/sample-case';
 
 export const metadata: Metadata = { title: 'Result & replay' };
 
+const sampleTest = `import { expect, test } from 'playwright/test';
+
+test('sample-coupon regression', async ({ page }) => {
+  await page.goto('/cart');
+  await page.getByTestId('coupon-code').fill('SAVE10');
+  await page.getByRole('button', { exact: true, name: 'Apply' }).click();
+  await page.getByRole('button', { exact: true, name: 'Remove Item B' }).click();
+  await expect(page.getByTestId('cart-total')).toHaveText('$90.00');
+});
+`;
+const sampleTestDownload = `data:text/plain;charset=utf-8,${encodeURIComponent(sampleTest)}`;
+
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (id !== sampleCase.id) notFound();
@@ -29,10 +41,13 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         </div>
         <div>
           <span className="eyebrow">VERIFICATION STATUS</span>
-          <h2>No result yet</h2>
-          <p>No test has been generated or executed for this sample preview.</p>
+          <h2>Replay candidate ready</h2>
+          <p>
+            The authored $90.00 assertion is ready for a fresh-state replay and corrected-version
+            comparison.
+          </p>
         </div>
-        <span className="pill">Not evaluated</span>
+        <span className="pill">Evidence pending</span>
       </section>
       <div className="two-column equal-columns">
         <section className="panel detail-panel">
@@ -41,12 +56,16 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </div>
           <h2>From steps to a runnable test.</h2>
           <p>
-            The generated Playwright test and its setup requirements will appear after an
-            investigation.
+            Generated from the immutable sample candidate. It asserts $90.00, never the buggy $85.00
+            value.
           </p>
-          <button className="button secondary" disabled type="button">
+          <a
+            className="button secondary"
+            download="sample-coupon.spec.ts"
+            href={sampleTestDownload}
+          >
             Download test
-          </button>
+          </a>
         </section>
         <section className="panel detail-panel">
           <div className="section-kicker">
@@ -54,14 +73,22 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </div>
           <h2>Same test. Fresh starting state.</h2>
           <p>
-            Compare the relevant assertion on buggy and corrected versions without changing the
-            candidate.
+            Comparison runs the same content hash on buggy and corrected fixtures. Results appear
+            here once a worker owns replay execution.
           </p>
-          <button className="button secondary" disabled type="button">
-            Run verification
-          </button>
+          <span className="muted-label">Awaiting replay worker</span>
         </section>
       </div>
+      <section className="panel detail-panel">
+        <div className="section-kicker">
+          <Scale size={17} /> Evidence
+        </div>
+        <h2>What the result retains.</h2>
+        <p>
+          Screenshot, action log, console messages, and same-origin request metadata are attached to
+          a replay attempt when it runs.
+        </p>
+      </section>
       <div className="requirement-note">
         <strong>What a valid result needs</strong>
         <p>

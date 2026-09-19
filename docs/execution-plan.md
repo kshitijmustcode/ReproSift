@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–25 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; replay classification and corrected-version comparison policies are available. Steps 26–34 remain pending.
+Steps 1–26 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. Steps 27–34 remain pending.
 
-**Next action: Step 26 — complete the results page.** Add comparison results, evidence, replay controls, and downloads.
+**Next action: Step 27 — add evaluation fixtures.** Define and isolate the remaining bug and no-bug scenarios.
 
 ## How to use this plan
 
@@ -150,7 +150,8 @@ Steps 1–25 are complete. The dashboard validates and renders persisted investi
   - Work: Execute the identical candidate against the corrected variant.
   - Completion check: Relevant assertion passes without modifying the test.
 
-- [ ] **Step 26. Complete the results page**
+- [x] **Step 26. Complete the results page**
+  - Status: complete. The sample result page exposes a controlled Playwright test download and shows replay, comparison, and evidence state without claiming unexecuted results.
   - Work: Add comparison results, evidence, replay controls and downloads.
   - Completion check: Report-to-test demo works through the UI.
 
