@@ -10,3 +10,4 @@ export {
   type BrowserSessionNavigation,
   type BrowserSessionReset,
 } from './session.js';
+export { generatePlaywrightTest, type ReplayCandidate } from './test-generator.js';

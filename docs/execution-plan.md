@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–20 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI. Steps 21–34 remain pending.
+Steps 1–22 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; reproduction candidates and controlled Playwright test templates are available. Steps 23–34 remain pending.
 
-**Next action: Step 21 — record structured reproductions.** Store immutable actions, preconditions, and assertions.
+**Next action: Step 23 — implement independent replay.** Replay candidates from a clean state without model decisions.
 
 ## How to use this plan
 
@@ -125,11 +125,13 @@ Steps 1–20 are complete. The dashboard validates and renders persisted investi
 
 ## Phase 4 — Produce and verify regression tests
 
-- [ ] **Step 21. Record structured reproductions**
+- [x] **Step 21. Record structured reproductions**
+  - Status: complete. Python validates immutable candidate actions, preconditions, assertions, requirement references, and canonical content hashes.
   - Work: Store versioned actions, preconditions, assertions and requirement references.
   - Completion check: Candidate data passes schema validation and remains immutable.
 
-- [ ] **Step 22. Generate Playwright tests**
+- [x] **Step 22. Generate Playwright tests**
+  - Status: complete. The TypeScript browser-runner generates controlled Playwright test source from supported candidate actions and money assertions, retaining the candidate content hash. It does not accept arbitrary generated JavaScript.
   - Work: Convert candidates into test code using controlled templates.
   - Completion check: Exported test runs with documented setup.
 
