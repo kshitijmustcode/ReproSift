@@ -107,3 +107,27 @@ class ArtifactRow(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     storage_key: Mapped[str] = mapped_column(String(512), unique=True)
+
+
+class RequirementDocumentRow(Base):
+    __tablename__ = "requirement_documents"
+    __table_args__ = (UniqueConstraint("source_name", "version"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    source_name: Mapped[str] = mapped_column(String(256))
+    version: Mapped[int] = mapped_column(Integer)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class RequirementChunkRow(Base):
+    __tablename__ = "requirement_chunks"
+    __table_args__ = (UniqueConstraint("document_id", "ordinal"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    document_id: Mapped[str] = mapped_column(
+        ForeignKey("requirement_documents.id", ondelete="CASCADE"), index=True
+    )
+    ordinal: Mapped[int] = mapped_column(Integer)
+    heading: Mapped[str] = mapped_column(String(512))
+    content: Mapped[str] = mapped_column(Text)

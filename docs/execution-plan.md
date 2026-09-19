@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–16 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns versioned investigation persistence migrations and repositories. Steps 17–34 remain pending.
+Steps 1–17 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns versioned investigation persistence and source-backed requirement retrieval. Steps 18–34 remain pending.
 
-**Next action: Step 17 — implement requirements retrieval.** Add Markdown/text ingestion, embeddings, pgvector search, and source references.
+**Next action: Step 18 — add OpenAI integration.** Implement the provider adapter, structured outputs, and bounded usage recording.
 
 ## How to use this plan
 
@@ -103,7 +103,8 @@ Steps 1–16 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Set up PostgreSQL, migrations, investigations, attempts, events and artifact metadata.
   - Completion check: Run history survives service restarts.
 
-- [ ] **Step 17. Implement requirements retrieval**
+- [x] **Step 17. Implement requirements retrieval**
+  - Status: complete. Versioned Markdown requirements are split into persisted heading chunks and retrieved by a bounded deterministic lexical baseline with document/version/chunk citations. The Step 18 OpenAI provider adapter will add embeddings and PostgreSQL pgvector ranking without changing the citation contract.
   - Work: Add Markdown/text ingestion, embeddings, pgvector search and source references.
   - Completion check: Coupon requirement is retrieved with its version and citation.
 
@@ -182,6 +183,8 @@ Steps 1–16 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-19 — Step 17 complete: added versioned Markdown ingestion, immutable source/version enforcement, persisted heading chunks, and bounded source-backed retrieval. The coupon requirement test returns its document ID, version, chunk ID, heading, and content citation. Local lexical ranking is the intentional baseline until the Step 18 provider adapter adds embeddings and PostgreSQL pgvector ranking. Next: Step 18, OpenAI integration.
 
 - 2026-09-19 — Step 16 complete: added SQLAlchemy 2, Alembic, and a PostgreSQL driver; created the initial migration and Python-owned repositories for investigations, attempts, events, and artifact metadata. A migration-backed SQLite test creates records, disposes the database, reopens it, and reads the same investigation/event history. PostgreSQL remains the deployment target. Next: Step 17, requirements retrieval.
 
