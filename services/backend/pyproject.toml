@@ -5,10 +5,13 @@ description = "ReproSift API and investigation backend"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
+    "alembic==1.18.4",
     "fastapi==0.141.1",
     "mcp==2.2.0",
+    "psycopg[binary]==3.3.3",
     "pydantic==2.13.5",
     "pydantic-settings==2.15.0",
+    "sqlalchemy==2.0.48",
     "uvicorn==0.53.0",
 ]
 

@@ -1,6 +1,6 @@
 # Core contracts — proposed version 1
 
-Status: investigation contracts below remain design specifications. The MCP status contract is implemented in [status.ts](../packages/mcp-server/src/status.ts), and Step 12 lifecycle input/output schemas are in [browser-tools.ts](../packages/mcp-server/src/browser-tools.ts). Python validates status and screenshot response boundaries through [status_client.py](../services/backend/src/reprosift/mcp/status_client.py) and [browser_client.py](../services/backend/src/reprosift/mcp/browser_client.py). During further implementation, owner schemas in the Python backend and packages/contracts-ts become authoritative; update this document with links rather than maintaining conflicting type copies.
+Status: the investigation persistence schema is implemented by the Python [SQLAlchemy models](../services/backend/src/reprosift/persistence/models.py) and its initial [Alembic migration](../services/backend/migrations/versions/20260919_01_initial_investigations.py). The MCP status contract is implemented in [status.ts](../packages/mcp-server/src/status.ts), and Step 12 lifecycle input/output schemas are in [browser-tools.ts](../packages/mcp-server/src/browser-tools.ts). Python validates status and screenshot response boundaries through [status_client.py](../services/backend/src/reprosift/mcp/status_client.py) and [browser_client.py](../services/backend/src/reprosift/mcp/browser_client.py). Remaining investigation API/event schemas are design specifications until their owner routes are implemented.
 
 ## Shared conventions
 

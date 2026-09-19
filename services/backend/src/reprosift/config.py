@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     api_host: IPv4Address | IPv6Address = IPv4Address("127.0.0.1")
     api_port: int = Field(default=8000, ge=1, le=65535)
     log_level: Literal["debug", "info", "warning", "error", "critical"] = "info"
+    database_url: str = "sqlite:///./reprosift.db"
     mcp_node_command: str = "node"
     mcp_server_entrypoint: Path = REPOSITORY_ROOT / "packages/mcp-server/dist/cli.js"
     mcp_connect_timeout_ms: int = Field(default=5_000, ge=100, le=30_000)

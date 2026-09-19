@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–15 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The demo store implements the deterministic SAVE10 cart fixture, including the documented buggy and corrected arithmetic variants. Steps 16–34 remain pending.
+Steps 1–16 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns versioned investigation persistence migrations and repositories. Steps 17–34 remain pending.
 
-**Next action: Step 16 — add persistence.** Set up PostgreSQL, migrations, investigations, attempts, events, and artifact metadata. No LLM calls are needed for that milestone.
+**Next action: Step 17 — implement requirements retrieval.** Add Markdown/text ingestion, embeddings, pgvector search, and source references.
 
 ## How to use this plan
 
@@ -98,7 +98,8 @@ Steps 1–15 are complete. Dashboard and demo-store page shells and the API heal
 
 ## Phase 3 — Add investigation intelligence
 
-- [ ] **Step 16. Add persistence**
+- [x] **Step 16. Add persistence**
+  - Status: complete. SQLAlchemy models, an Alembic migration, and repositories store investigations, attempts, ordered events, and artifact metadata. The database URL supports PostgreSQL deployments and defaults to SQLite for self-contained local setup.
   - Work: Set up PostgreSQL, migrations, investigations, attempts, events and artifact metadata.
   - Completion check: Run history survives service restarts.
 
@@ -181,6 +182,8 @@ Steps 1–15 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-19 — Step 16 complete: added SQLAlchemy 2, Alembic, and a PostgreSQL driver; created the initial migration and Python-owned repositories for investigations, attempts, events, and artifact metadata. A migration-backed SQLite test creates records, disposes the database, reopens it, and reads the same investigation/event history. PostgreSQL remains the deployment target. Next: Step 17, requirements retrieval.
 
 - 2026-09-18 — Step 15 complete: added the idempotent `reset_browser_session` MCP tool, which clears cookies and browser storage then reloads the allowed seeded route. The Python workflow resets before acting; two real executions produced the same reset/fill/click/click action sequence with distinct browser session IDs. Browser sessions already use isolated contexts and now cap navigation/reset/click/fill/select operations at 12 commands. The cart remains a stateless client fixture until persistence exists. Next: Step 16, persistence.
 

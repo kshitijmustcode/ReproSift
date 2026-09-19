@@ -11,7 +11,7 @@ uv run --project services/backend --locked reprosift-api
 
 Uses Python 3.13.15 from the root `.python-version`. Open http://127.0.0.1:8000/health or http://127.0.0.1:8000/docs. Restart after code changes; this entry point does not enable automatic reload.
 
-`GET /health` returns `{"status":"ok","service":"reprosift-api"}`. This is process liveness only; it does not check a database, MCP connection or model provider. No external service credentials are needed. Investigation routes and workers are not implemented.
+`GET /health` returns `{"status":"ok","service":"reprosift-api"}`. This is process liveness only; it does not check a database, MCP connection or model provider. No external service credentials are needed. Step 16 adds SQLAlchemy models, Alembic migrations, and repositories for investigation history; API routes and workers are not implemented yet. Local development defaults to SQLite, while `DATABASE_URL` accepts the PostgreSQL deployment URL.
 
 `GET /mcp/status` probes the local TypeScript MCP process through the Python adapter. A successful probe returns `200` with `status: "connected"` and the versioned MCP status payload. Expected launch, call, or validation failures return `503` with `status: "unavailable"` and a safe `MCP_UNAVAILABLE` error. It is a dashboard integration diagnostic, separate from `/health`.
 
