@@ -53,6 +53,31 @@ const browserScreenshotSchema = z.union([
 
 export type BrowserScreenshotStatus = z.infer<typeof browserScreenshotSchema>;
 
+const investigationSchema = z.strictObject({
+  id: z.string().min(1),
+  report: z.string(),
+  expectedBehavior: z.string(),
+  scenarioId: z.string(),
+  status: z.enum([
+    'queued',
+    'running',
+    'replaying',
+    'completed',
+    'failed',
+    'cancelled',
+    'interrupted',
+  ]),
+  createdAt: z.string().datetime(),
+});
+const investigationEventSchema = z.strictObject({
+  id: z.string(),
+  sequence: z.number().int().positive(),
+  type: z.string(),
+  timestamp: z.string().datetime(),
+});
+export type InvestigationWorkspace = z.infer<typeof investigationSchema>;
+export type InvestigationEvent = z.infer<typeof investigationEventSchema>;
+
 const defaultApiUrl = 'http://127.0.0.1:8000';
 
 function getApiUrl(): string {
@@ -98,6 +123,31 @@ export async function getSampleCartScreenshot(): Promise<BrowserScreenshotStatus
       'The dashboard could not reach the browser preview API.',
       'connect',
     );
+  }
+}
+
+export async function getInvestigationWorkspace(
+  investigationId: string,
+): Promise<{ investigation: InvestigationWorkspace; events: InvestigationEvent[] } | null> {
+  try {
+    const [investigationResponse, eventsResponse] = await Promise.all([
+      fetch(`${getApiUrl()}/investigations/${investigationId}`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(6_000),
+      }),
+      fetch(`${getApiUrl()}/investigations/${investigationId}/events`, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(6_000),
+      }),
+    ]);
+    if (!investigationResponse.ok || !eventsResponse.ok) return null;
+    const investigation = investigationSchema.safeParse(await investigationResponse.json());
+    const events = z.array(investigationEventSchema).safeParse(await eventsResponse.json());
+    return investigation.success && events.success
+      ? { investigation: investigation.data, events: events.data }
+      : null;
+  } catch {
+    return null;
   }
 }
 

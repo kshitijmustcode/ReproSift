@@ -6,20 +6,24 @@ import { ArrowRight, Monitor, ScanLine } from 'lucide-react';
 import { PageHeader, PreviewNotice } from '@/components/page-header';
 import { WorkspaceTabs } from '@/components/workspace-tabs';
 import { sampleCase, sampleResultPath } from '@/lib/sample-case';
-import { getSampleCartScreenshot } from '@/lib/api';
+import { getInvestigationWorkspace, getSampleCartScreenshot } from '@/lib/api';
 
 export const metadata: Metadata = { title: 'Sample workspace' };
 
 export default async function InvestigationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (id !== sampleCase.id) notFound();
+  if (id !== sampleCase.id && !id.match(/^[0-9a-f-]{36}$/)) notFound();
+  const workspace = id === sampleCase.id ? null : await getInvestigationWorkspace(id);
+  if (id !== sampleCase.id && workspace === null) notFound();
   const browserScreenshot = await getSampleCartScreenshot();
+  const report = workspace?.investigation.report ?? sampleCase.report;
+  const status = workspace?.investigation.status ?? 'not started';
   return (
     <>
       <PageHeader
         eyebrow="SAMPLE CASE / CART & CHECKOUT"
         title="Follow the evidence."
-        description={sampleCase.title}
+        description={workspace?.investigation.expectedBehavior ?? sampleCase.title}
         action={
           <Link className="button secondary" href={sampleResultPath}>
             Result preview <ArrowRight size={16} />
@@ -30,9 +34,9 @@ export default async function InvestigationPage({ params }: { params: Promise<{ 
       <div className="case-summary">
         <div>
           <span className="eyebrow">REPORTED BEHAVIOR</span>
-          <p>{sampleCase.report}</p>
+          <p>{report}</p>
         </div>
-        <span className="pill">Not started</span>
+        <span className="pill">{status}</span>
       </div>
       <div className="two-column workspace-columns">
         <WorkspaceTabs />
@@ -68,6 +72,25 @@ export default async function InvestigationPage({ params }: { params: Promise<{ 
           </div>
         </section>
       </div>
+      {workspace ? (
+        <section className="panel">
+          <div className="panel-heading">
+            <h2>Persisted progress</h2>
+            <span className="muted-label">{workspace.events.length} events</span>
+          </div>
+          {workspace.events.length ? (
+            <ol className="event-list">
+              {workspace.events.map((event) => (
+                <li key={event.id}>
+                  {event.sequence}. {event.type}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p>No events have been recorded yet.</p>
+          )}
+        </section>
+      ) : null}
     </>
   );
 }

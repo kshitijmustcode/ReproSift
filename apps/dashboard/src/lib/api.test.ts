@@ -1,8 +1,39 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getMcpConnectionStatus, getSampleCartScreenshot } from './api';
+import { getInvestigationWorkspace, getMcpConnectionStatus, getSampleCartScreenshot } from './api';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+it('validates persisted workspace and event responses', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            id: 'x',
+            report: 'report',
+            expectedBehavior: 'expected',
+            scenarioId: 'sample-coupon',
+            status: 'queued',
+            createdAt: '2026-09-19T00:00:00Z',
+          }),
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            { id: 'event-1', sequence: 1, type: 'run_started', timestamp: '2026-09-19T00:00:00Z' },
+          ]),
+        ),
+      ),
+  );
+  await expect(getInvestigationWorkspace('x')).resolves.toMatchObject({
+    investigation: { status: 'queued' },
+    events: [{ type: 'run_started' }],
+  });
 });
 
 describe('getSampleCartScreenshot', () => {

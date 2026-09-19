@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–19 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns persistence, source-backed retrieval, a bounded OpenAI provider adapter, and LangGraph orchestration. Steps 20–34 remain pending.
+Steps 1–20 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI. Steps 21–34 remain pending.
 
-**Next action: Step 20 — build the investigation workspace.** Show persisted progress, screenshots, evidence, and cancellation.
+**Next action: Step 21 — record structured reproductions.** Store immutable actions, preconditions, and assertions.
 
 ## How to use this plan
 
@@ -118,7 +118,8 @@ Steps 1–19 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Connect requirement retrieval, browser observation, action selection and stopping rules.
   - Completion check: Agent investigates the sample report without a hardcoded action sequence.
 
-- [ ] **Step 20. Build the investigation workspace**
+- [x] **Step 20. Build the investigation workspace**
+  - Status: complete. FastAPI creates, reads, lists events for, and idempotently cancels persisted investigations. The dashboard validates the workspace contract and renders persisted status and event progress for real investigation IDs.
   - Work: Show persisted progress, screenshots, evidence and cancellation.
   - Completion check: User can submit, follow and cancel a run.
 
