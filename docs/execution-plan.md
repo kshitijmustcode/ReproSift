@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–23 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; reproduction candidates, controlled Playwright test templates, and fresh-session replay are available. Steps 24–34 remain pending.
+Steps 1–25 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; replay classification and corrected-version comparison policies are available. Steps 26–34 remain pending.
 
-**Next action: Step 24 — implement verification policy.** Classify matching defects, expected behavior, execution failures, and inconclusive results in Python.
+**Next action: Step 26 — complete the results page.** Add comparison results, evidence, replay controls, and downloads.
 
 ## How to use this plan
 
@@ -140,11 +140,13 @@ Steps 1–23 are complete. The dashboard validates and renders persisted investi
   - Work: Replay without LLM decisions against freshly reset state.
   - Completion check: Intended assertion fails on the buggy version.
 
-- [ ] **Step 24. Implement verification policy**
+- [x] **Step 24. Implement verification policy**
+  - Status: complete. A pure Python classifier distinguishes matching defects, expected behavior, execution failures, and inconclusive observations without treating a broken setup as a defect.
   - Work: Classify matching defects, expected behavior, execution failures and inconclusive results in Python.
   - Completion check: Classifier tests cover the documented decision table.
 
-- [ ] **Step 25. Compare corrected behavior**
+- [x] **Step 25. Compare corrected behavior**
+  - Status: complete. The corrected-version policy reports supported only when the same candidate matches on buggy behavior and passes on corrected behavior; incomplete comparisons remain unavailable.
   - Work: Execute the identical candidate against the corrected variant.
   - Completion check: Relevant assertion passes without modifying the test.
 
