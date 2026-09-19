@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–18 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns persistence, source-backed retrieval, and a bounded OpenAI provider adapter. Steps 19–34 remain pending.
+Steps 1–19 are complete. Dashboard and demo-store page shells and the API health endpoint run locally on ports 3000, 3001 and 8000. The MCP server exposes validated status, browser lifecycle, actions, evidence, and reset tools over stdio; Python owns a fresh process/session to execute the allowed cart route. The backend owns persistence, source-backed retrieval, a bounded OpenAI provider adapter, and LangGraph orchestration. Steps 20–34 remain pending.
 
-**Next action: Step 19 — build the LangGraph workflow.** Connect retrieval, browser observation, action selection, and stopping rules.
+**Next action: Step 20 — build the investigation workspace.** Show persisted progress, screenshots, evidence, and cancellation.
 
 ## How to use this plan
 
@@ -113,7 +113,8 @@ Steps 1–18 are complete. Dashboard and demo-store page shells and the API heal
   - Work: Implement the model adapter, structured outputs, usage recording and budgets.
   - Completion check: One bounded model request succeeds and failures are reported clearly.
 
-- [ ] **Step 19. Build the LangGraph workflow**
+- [x] **Step 19. Build the LangGraph workflow**
+  - Status: complete. A bounded LangGraph run retrieves approved requirement citations, requests one structured model plan, and collects raw scoped browser evidence before terminating. It does not classify a defect or loop/retry actions.
   - Work: Connect requirement retrieval, browser observation, action selection and stopping rules.
   - Completion check: Agent investigates the sample report without a hardcoded action sequence.
 
@@ -184,6 +185,8 @@ Steps 1–18 are complete. Dashboard and demo-store page shells and the API heal
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-19 — Step 19 complete: added a LangGraph evidence-only workflow with injected requirement-search, plan-provider, and browser ports. Its only path is retrieve → plan → collect evidence → end; the workflow test validates citation, structured plan, and browser evidence propagation without a real model or browser call. Next: Step 20, investigation workspace.
 
 - 2026-09-19 — Step 18 complete: added the official OpenAI Python SDK and a bounded Responses adapter with strict structured output, validated plan schema, input/output token accounting, and safe missing-key, malformed-output, and budget failures. Tests use an injected fake client and consume no credits. A live model request remains a local configuration check once `OPENAI_API_KEY` is supplied. Next: Step 19, LangGraph workflow.
 

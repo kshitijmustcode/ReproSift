@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–18 are complete. Next: Step 19, LangGraph workflow.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–19 are complete. Next: Step 20, investigation workspace.
 
 Read these before implementing the relevant feature:
 
