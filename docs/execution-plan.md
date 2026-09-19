@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–22 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; reproduction candidates and controlled Playwright test templates are available. Steps 23–34 remain pending.
+Steps 1–23 are complete. The dashboard validates and renders persisted investigation workspace status and events through FastAPI; reproduction candidates, controlled Playwright test templates, and fresh-session replay are available. Steps 24–34 remain pending.
 
-**Next action: Step 23 — implement independent replay.** Replay candidates from a clean state without model decisions.
+**Next action: Step 24 — implement verification policy.** Classify matching defects, expected behavior, execution failures, and inconclusive results in Python.
 
 ## How to use this plan
 
@@ -135,7 +135,8 @@ Steps 1–22 are complete. The dashboard validates and renders persisted investi
   - Work: Convert candidates into test code using controlled templates.
   - Completion check: Exported test runs with documented setup.
 
-- [ ] **Step 23. Implement independent replay**
+- [x] **Step 23. Implement independent replay**
+  - Status: complete. The TypeScript replay executor creates a fresh session, resets the candidate route, runs only candidate actions, observes assertion targets, and always closes browser resources. It returns raw assertion observations for Python policy classification.
   - Work: Replay without LLM decisions against freshly reset state.
   - Completion check: Intended assertion fails on the buggy version.
 

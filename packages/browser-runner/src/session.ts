@@ -232,6 +232,21 @@ export class BrowserSessionManager {
     }
   }
 
+  async readTargetText(sessionId: string, target: BrowserLocator): Promise<string> {
+    const session = this.requireSession(sessionId);
+    try {
+      return await this.resolveLocator(session.page, target).innerText({
+        timeout: this.options.navigationTimeoutMs,
+      });
+    } catch (error) {
+      if (error instanceof BrowserLifecycleError) throw error;
+      throw new BrowserLifecycleError(
+        'BROWSER_OPERATION_FAILED',
+        `Could not read the browser target: ${this.safeErrorMessage(error)}`,
+      );
+    }
+  }
+
   async click(sessionId: string, target: BrowserLocator): Promise<BrowserActionResult> {
     const session = this.requireSession(sessionId);
     try {

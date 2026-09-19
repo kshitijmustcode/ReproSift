@@ -11,3 +11,4 @@ export {
   type BrowserSessionReset,
 } from './session.js';
 export { generatePlaywrightTest, type ReplayCandidate } from './test-generator.js';
+export { replayCandidate, type ReplayObservation } from './replay.js';
