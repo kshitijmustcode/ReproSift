@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     api_port: int = Field(default=8000, ge=1, le=65535)
     log_level: Literal["debug", "info", "warning", "error", "critical"] = "info"
     database_url: str = "sqlite:///./reprosift.db"
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-5-mini"
+    openai_max_output_tokens: int = Field(default=1_000, ge=64, le=4_000)
+    openai_max_total_tokens_per_run: int = Field(default=60_000, ge=64, le=500_000)
     mcp_node_command: str = "node"
     mcp_server_entrypoint: Path = REPOSITORY_ROOT / "packages/mcp-server/dist/cli.js"
     mcp_connect_timeout_ms: int = Field(default=5_000, ge=100, le=30_000)

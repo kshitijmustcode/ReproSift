@@ -325,7 +325,7 @@ Require strict typing, runtime validation at trust boundaries, explicit state/ou
 
 ## Project specifications and tooling
 
-**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–17 are complete. Next: Step 18, OpenAI integration.
+**Implementation checklist:** [34-step execution plan](docs/execution-plan.md). Track completed steps and evidence there. Steps 1–18 are complete. Next: Step 19, LangGraph workflow.
 
 Read these before implementing the relevant feature:
 
