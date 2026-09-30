@@ -18,6 +18,9 @@ export function StoreNav() {
         <ShoppingBag size={17} aria-hidden="true" />
         Cart
       </Link>
+      <Link href="/scenarios" aria-current={pathname === '/scenarios' ? 'page' : undefined}>
+        Scenarios
+      </Link>
     </nav>
   );
 }

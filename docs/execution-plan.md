@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–27 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. Step 27 introduces a bounded Redis-backed queue configuration and preserves an interrupted attempt as a durable record. Steps 28–34 remain pending.
+Steps 1–28 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. The demo store now exposes all five specified buggy/corrected fixture variants. Steps 29–34 remain pending.
 
-**Next action: Step 28 — add the remaining scenarios.** Define and isolate the remaining bug and no-bug scenarios.
+**Next action: Step 29 — build the evaluation harness.** Measure repeatable replay behavior against the fixtures.
 
 ## How to use this plan
 
@@ -162,7 +162,8 @@ Steps 1–27 are complete. The dashboard includes an inspectable result and repl
   - Work: Introduce Celery/Redis locally, attempt tracking, recovery and concurrency limits.
   - Completion check: Worker failure produces a defined outcome without blindly repeating actions.
 
-- [ ] **Step 28. Add the remaining scenarios**
+- [x] **Step 28. Add the remaining scenarios**
+  - Status: complete. E02–E05 have independent resettable state, one intentional buggy condition each, corrected behavior selected through the existing server-side variant, and authored control tests. The demo store exposes them at `/scenarios` for local inspection.
   - Work: Implement the other four fixture specifications and corrected counterparts.
   - Completion check: Manually authored control tests validate each fixture.
 
@@ -193,6 +194,8 @@ Steps 1–27 are complete. The dashboard includes an inspectable result and repl
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-30 — Step 28 complete: implemented E02 removal-total, E03 cart-badge, E04 free-shipping-boundary, and E05 required-address fixtures with isolated local state and server-owned buggy/corrected selection. Added authored controls for buggy, corrected, and relevant no-bug outcomes, plus a local scenario-lab page. Next: Step 29, evaluation harness.
 
 - 2026-09-30 — Step 27 complete: added a Redis-backed Celery application factory with configurable worker concurrency, late acknowledgement, and one-message prefetching. Worker exceptions flow to an explicit attempt failure port and do not trigger Celery action retries. The persistence repository can record an interrupted attempt and clear the active attempt so recovery creates a new ordinal. Focused Python checks passed; next: Step 28, remaining scenarios.
 

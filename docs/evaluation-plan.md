@@ -1,6 +1,6 @@
 # Evaluation fixtures and benchmark plan
 
-Status: authored fixture specifications. Executable fixtures and benchmark results do not exist yet.
+Status: E01–E05 fixture specifications are executable in the demo store. Benchmark results do not exist yet.
 
 All monetary values below are integer USD cents; no taxes unless specified. Each fixture has independent reset data and exactly one intentional defect. Shipping is disabled except in E04. The harness controls variants and labels.
 
