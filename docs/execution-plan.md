@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–28 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. The demo store now exposes all five specified buggy/corrected fixture variants. Steps 29–34 remain pending.
+Steps 1–29 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. A versioned development dataset produces repeatable results while preserving execution failures and no-bug controls. Steps 30–34 remain pending.
 
-**Next action: Step 29 — build the evaluation harness.** Measure repeatable replay behavior against the fixtures.
+**Next action: Step 30 — fix measured weaknesses.** Improve issues exposed by the evaluation results.
 
 ## How to use this plan
 
@@ -167,7 +167,8 @@ Steps 1–28 are complete. The dashboard includes an inspectable result and repl
   - Work: Implement the other four fixture specifications and corrected counterparts.
   - Completion check: Manually authored control tests validate each fixture.
 
-- [ ] **Step 29. Build the evaluation harness**
+- [x] **Step 29. Build the evaluation harness**
+  - Status: complete. The Python harness validates a versioned development dataset, classifies every replay with the shared verification policy, and writes raw results with outcomes, duration, token, and cost fields. The initial recorded baseline covers all five scenarios, no-bug controls, and an execution failure without spending model credits; a narrow subprocess adapter defines the later TypeScript-runner bridge.
   - Work: Add report variations, no-bug cases, replay measurements and cost/latency reporting.
   - Completion check: Repeatable command generates benchmark results including failures.
 
@@ -194,6 +195,8 @@ Steps 1–28 are complete. The dashboard includes an inspectable result and repl
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-30 — Step 29 complete: added a validated Python evaluation harness, versioned development labels outside the agent corpus, a repeatable `reprosift-evaluate` command, and raw JSON result output. The recorded baseline covers five bug reports, five no-bug controls, three replay measurements per case, and preserves an intentional reset failure as `execution_failure`. It reports duration, token, and cost fields (all zero for fixed-candidate replay). Next: Step 30, fix measured weaknesses.
 
 - 2026-09-30 — Step 28 complete: implemented E02 removal-total, E03 cart-badge, E04 free-shipping-boundary, and E05 required-address fixtures with isolated local state and server-owned buggy/corrected selection. Added authored controls for buggy, corrected, and relevant no-bug outcomes, plus a local scenario-lab page. Next: Step 29, evaluation harness.
 

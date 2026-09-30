@@ -1,0 +1,155 @@
+{
+  "version": "development-v1",
+  "cases": [
+    {
+      "id": "E01-bug",
+      "scenarioId": "sample-coupon",
+      "report": "SAVE10 remains too large after removing Item B.",
+      "expectedOutcome": "matching_defect",
+      "candidateHash": "e01-bug-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$90.00", "actual": "$85.00", "passed": false }]
+        }
+      ]
+    },
+    {
+      "id": "E01-control",
+      "scenarioId": "sample-coupon",
+      "report": "SAVE10 total is correct without removing an item.",
+      "expectedOutcome": "expected_behavior",
+      "candidateHash": "e01-control-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$135.00", "actual": "$135.00", "passed": true }]
+        }
+      ]
+    },
+    {
+      "id": "E02-bug",
+      "scenarioId": "removal-total",
+      "report": "Removing Item B does not update the total.",
+      "expectedOutcome": "matching_defect",
+      "candidateHash": "e02-bug-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$100.00", "actual": "$150.00", "passed": false }]
+        }
+      ]
+    },
+    {
+      "id": "E02-control",
+      "scenarioId": "removal-total",
+      "report": "The untouched cart total is correct.",
+      "expectedOutcome": "expected_behavior",
+      "candidateHash": "e02-control-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$150.00", "actual": "$150.00", "passed": true }]
+        }
+      ]
+    },
+    {
+      "id": "E03-bug",
+      "scenarioId": "cart-badge",
+      "report": "Changing Item A to three does not update the cart badge.",
+      "expectedOutcome": "matching_defect",
+      "candidateHash": "e03-bug-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "3", "actual": "1", "passed": false }]
+        }
+      ]
+    },
+    {
+      "id": "E03-control",
+      "scenarioId": "cart-badge",
+      "report": "The initial cart badge has one item.",
+      "expectedOutcome": "expected_behavior",
+      "candidateHash": "e03-control-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "1", "actual": "1", "passed": true }]
+        }
+      ]
+    },
+    {
+      "id": "E04-bug",
+      "scenarioId": "shipping-threshold",
+      "report": "Exactly $100 merchandise is incorrectly charged shipping.",
+      "expectedOutcome": "matching_defect",
+      "candidateHash": "e04-bug-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$100.00", "actual": "$105.00", "passed": false }]
+        },
+        {
+          "preconditionsReached": false,
+          "supportedRequirement": true,
+          "assertions": [],
+          "executionError": "Fixture reset timed out."
+        }
+      ]
+    },
+    {
+      "id": "E04-control",
+      "scenarioId": "shipping-threshold",
+      "report": "$99 merchandise correctly includes shipping.",
+      "expectedOutcome": "expected_behavior",
+      "candidateHash": "e04-control-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [{ "expected": "$104.00", "actual": "$104.00", "passed": true }]
+        }
+      ]
+    },
+    {
+      "id": "E05-bug",
+      "scenarioId": "required-address",
+      "report": "Checkout creates an order without address line 1.",
+      "expectedOutcome": "matching_defect",
+      "candidateHash": "e05-bug-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [
+            { "expected": "No order created", "actual": "Orders created: 1", "passed": false }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E05-control",
+      "scenarioId": "required-address",
+      "report": "Checkout creates one order with a complete address.",
+      "expectedOutcome": "expected_behavior",
+      "candidateHash": "e05-control-v1",
+      "replays": [
+        {
+          "preconditionsReached": true,
+          "supportedRequirement": true,
+          "assertions": [
+            { "expected": "Orders created: 1", "actual": "Orders created: 1", "passed": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

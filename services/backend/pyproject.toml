@@ -21,6 +21,7 @@ dependencies = [
 
 [project.scripts]
 reprosift-api = "reprosift.cli:main"
+reprosift-evaluate = "reprosift.evaluation:main"
 
 [build-system]
 requires = ["uv_build==0.12.13"]
