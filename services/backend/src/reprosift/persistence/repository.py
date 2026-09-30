@@ -133,6 +133,27 @@ class InvestigationRepository:
             investigation.status = InvestigationStatus.QUEUED.value
         return _attempt_from_row(row)
 
+    def interrupt_attempt(self, attempt_id: str, *, reason: str) -> Attempt | None:
+        """Record an interrupted worker attempt so recovery creates a new ordinal."""
+        with self._database.session() as session:
+            row = session.get(AttemptRow, attempt_id)
+            if row is None:
+                return None
+            if row.state not in {
+                AttemptState.COMPLETED.value,
+                AttemptState.CANCELLED.value,
+            }:
+                row.state = AttemptState.INTERRUPTED.value
+                row.finished_at = _utc_now()
+                row.error_json = _serialize({"reason": reason})
+
+                investigation = session.get(InvestigationRow, row.investigation_id)
+                if investigation is not None:
+                    investigation.status = InvestigationStatus.INTERRUPTED.value
+                    if investigation.active_attempt_id == row.id:
+                        investigation.active_attempt_id = None
+            return _attempt_from_row(row)
+
     def append_event(
         self,
         *,

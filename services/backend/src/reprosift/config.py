@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-5-mini"
     openai_max_output_tokens: int = Field(default=1_000, ge=64, le=4_000)
     openai_max_total_tokens_per_run: int = Field(default=60_000, ge=64, le=500_000)
+    redis_url: str = "redis://127.0.0.1:6379/0"
+    max_active_investigations: int = Field(default=1, ge=1, le=10)
     mcp_node_command: str = "node"
     mcp_server_entrypoint: Path = REPOSITORY_ROOT / "packages/mcp-server/dist/cli.js"
     mcp_connect_timeout_ms: int = Field(default=5_000, ge=100, le=30_000)

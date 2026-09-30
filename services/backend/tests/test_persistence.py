@@ -4,7 +4,13 @@ from pathlib import Path
 from alembic import command
 from alembic.config import Config
 
-from reprosift.persistence import ArtifactKind, Database, InvestigationRepository
+from reprosift.persistence import (
+    ArtifactKind,
+    AttemptState,
+    Database,
+    InvestigationRepository,
+    InvestigationStatus,
+)
 
 
 def _migrate(database_url: str) -> None:
@@ -57,3 +63,39 @@ def test_run_history_survives_a_new_database_instance(tmp_path: Path) -> None:
     assert events[0].sequence == 1
     assert events[0].payload == {"scenarioId": "sample-coupon"}
     second_database.dispose()
+
+
+def test_interrupted_attempt_is_preserved_before_explicit_recovery(
+    tmp_path: Path,
+) -> None:
+    database_url = f"sqlite:///{tmp_path / 'reprosift.db'}"
+    _migrate(database_url)
+    database = Database(database_url)
+    repository = InvestigationRepository(database)
+    investigation = repository.create_investigation(
+        report="The checkout total is incorrect.",
+        expected_behavior="The total matches the cart.",
+        scenario_id="sample-coupon",
+    )
+    first_attempt = repository.create_attempt(
+        investigation_id=investigation.id,
+        deadline_at=datetime.now(UTC) + timedelta(minutes=5),
+        limits={"toolCalls": 12},
+    )
+
+    interrupted = repository.interrupt_attempt(
+        first_attempt.id, reason="Worker execution failed before completion."
+    )
+    recovered = repository.create_attempt(
+        investigation_id=investigation.id,
+        deadline_at=datetime.now(UTC) + timedelta(minutes=5),
+        limits={"toolCalls": 12},
+    )
+    restored = repository.get_investigation(investigation.id)
+
+    assert interrupted is not None
+    assert interrupted.state is AttemptState.INTERRUPTED
+    assert recovered.ordinal == 2
+    assert restored is not None
+    assert restored.status is InvestigationStatus.QUEUED
+    database.dispose()

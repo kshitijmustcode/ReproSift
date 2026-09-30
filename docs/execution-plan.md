@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–26 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. Steps 27–34 remain pending.
+Steps 1–27 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. Step 27 introduces a bounded Redis-backed queue configuration and preserves an interrupted attempt as a durable record. Steps 28–34 remain pending.
 
-**Next action: Step 27 — add evaluation fixtures.** Define and isolate the remaining bug and no-bug scenarios.
+**Next action: Step 28 — add the remaining scenarios.** Define and isolate the remaining bug and no-bug scenarios.
 
 ## How to use this plan
 
@@ -157,7 +157,8 @@ Steps 1–26 are complete. The dashboard includes an inspectable result and repl
 
 ## Phase 5 — Reliability and evaluation
 
-- [ ] **Step 27. Add durable job execution**
+- [x] **Step 27. Add durable job execution**
+  - Status: complete. Celery uses Redis locally with a single configurable investigation worker, late acknowledgements, and one-message prefetching. A failed attempt is recorded as interrupted and must be explicitly re-queued as a new attempt; browser actions are never retried automatically.
   - Work: Introduce Celery/Redis locally, attempt tracking, recovery and concurrency limits.
   - Completion check: Worker failure produces a defined outcome without blindly repeating actions.
 
@@ -192,6 +193,8 @@ Steps 1–26 are complete. The dashboard includes an inspectable result and repl
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-30 — Step 27 complete: added a Redis-backed Celery application factory with configurable worker concurrency, late acknowledgement, and one-message prefetching. Worker exceptions flow to an explicit attempt failure port and do not trigger Celery action retries. The persistence repository can record an interrupted attempt and clear the active attempt so recovery creates a new ordinal. Focused Python checks passed; next: Step 28, remaining scenarios.
 
 - 2026-09-19 — Step 19 complete: added a LangGraph evidence-only workflow with injected requirement-search, plan-provider, and browser ports. Its only path is retrieve → plan → collect evidence → end; the workflow test validates citation, structured plan, and browser evidence propagation without a real model or browser call. Next: Step 20, investigation workspace.
 

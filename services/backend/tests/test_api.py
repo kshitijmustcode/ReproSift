@@ -75,7 +75,7 @@ def test_health_and_openapi_contract() -> None:
         assert response.status_code == 200
         assert response.json() == {"status": "ok", "service": "reprosift-api"}
         assert "/health" in client.get("/openapi.json").json()["paths"]
-        assert client.get("/investigations").status_code == 404
+        assert client.get("/investigations").status_code == 405
 
 
 def test_mcp_status_exposes_a_validated_connected_response() -> None:
