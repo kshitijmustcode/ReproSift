@@ -4,9 +4,9 @@ Last updated: 2026-09-17.
 
 ## Current status
 
-Steps 1–29 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. A versioned development dataset produces repeatable results while preserving execution failures and no-bug controls. Steps 30–34 remain pending.
+Steps 1–30 are complete. The dashboard includes an inspectable result and replay page with a controlled test download and honest worker/evidence status. Evaluation output now flags outcome-label mismatches and rejects malformed runner responses instead of silently weakening evidence. Steps 31–34 remain pending.
 
-**Next action: Step 30 — fix measured weaknesses.** Improve issues exposed by the evaluation results.
+**Next action: Step 31 — containerize the services.** Add reproducible images and a local Compose workflow.
 
 ## How to use this plan
 
@@ -172,7 +172,8 @@ Steps 1–29 are complete. The dashboard includes an inspectable result and repl
   - Work: Add report variations, no-bug cases, replay measurements and cost/latency reporting.
   - Completion check: Repeatable command generates benchmark results including failures.
 
-- [ ] **Step 30. Fix measured weaknesses**
+- [x] **Step 30. Fix measured weaknesses**
+  - Status: complete. Evaluation results now retain the harness-only expected outcome and report mismatches per replay, so a reset failure cannot be hidden by a scenario aggregate. The browser-runner response parser rejects malformed assertions and precondition fields as execution failures instead of silently dropping them.
   - Work: Improve issues exposed by evaluation and add targeted regression coverage.
   - Completion check: Improvements are supported by repeatable results.
 
@@ -195,6 +196,8 @@ Steps 1–29 are complete. The dashboard includes an inspectable result and repl
   - Completion check: Another developer can run it and understand the evidence.
 
 ## Progress log
+
+- 2026-09-30 — Step 30 complete: the Step 29 baseline exposed that its aggregate counts did not show whether individual replays matched their expected harness labels; an E04 reset failure could be overlooked among matching outcomes. Results now include `expectedOutcome` and `matchesExpected`, and the report totals mismatch count (one for the preserved reset failure). Tightened the browser-runner JSON boundary to reject malformed assertion and precondition fields; regression tests cover all three malformed forms. Next: Step 31, containerize services.
 
 - 2026-09-30 — Step 29 complete: added a validated Python evaluation harness, versioned development labels outside the agent corpus, a repeatable `reprosift-evaluate` command, and raw JSON result output. The recorded baseline covers five bug reports, five no-bug controls, three replay measurements per case, and preserves an intentional reset failure as `execution_failure`. It reports duration, token, and cost fields (all zero for fixed-candidate replay). Next: Step 30, fix measured weaknesses.
 

@@ -150,6 +150,8 @@ class ReplayResult(BaseModel):
     candidate_hash: str = Field(alias="candidateHash")
     replay_index: int = Field(alias="replayIndex")
     outcome: ReplayOutcome
+    expected_outcome: ReplayOutcome = Field(alias="expectedOutcome")
+    matches_expected: bool = Field(alias="matchesExpected")
     duration_ms: int = Field(alias="durationMs")
     input_tokens: int = Field(alias="inputTokens")
     output_tokens: int = Field(alias="outputTokens")
@@ -163,6 +165,7 @@ class EvaluationReport(BaseModel):
     execution_mode: str = Field(alias="executionMode")
     results: tuple[ReplayResult, ...]
     outcome_counts: dict[str, int] = Field(alias="outcomeCounts")
+    expected_outcome_mismatches: int = Field(alias="expectedOutcomeMismatches")
     total_duration_ms: int = Field(alias="totalDurationMs")
     total_cost_usd: float = Field(alias="totalCostUsd")
 
@@ -178,13 +181,16 @@ class EvaluationHarness:
         for case in dataset.cases:
             for replay_index in range(repeats):
                 sample = self._executor.replay(case, replay_index)
+                outcome = classify_replay(sample.replay_input)
                 results.append(
                     ReplayResult(
                         caseId=case.id,
                         scenarioId=case.scenario_id,
                         candidateHash=case.candidate_hash,
                         replayIndex=replay_index + 1,
-                        outcome=classify_replay(sample.replay_input),
+                        outcome=outcome,
+                        expectedOutcome=case.expected_outcome,
+                        matchesExpected=outcome is case.expected_outcome,
                         durationMs=sample.duration_ms,
                         inputTokens=sample.input_tokens,
                         outputTokens=sample.output_tokens,
@@ -197,6 +203,9 @@ class EvaluationHarness:
             executionMode=type(self._executor).__name__,
             results=tuple(results),
             outcomeCounts=dict(sorted(counts.items())),
+            expectedOutcomeMismatches=sum(
+                not result.matches_expected for result in results
+            ),
             totalDurationMs=sum(result.duration_ms for result in results),
             totalCostUsd=sum(result.cost_usd for result in results),
         )
@@ -213,19 +222,33 @@ def _sample_from_runner_response(response: str, duration_ms: int) -> ReplaySampl
     assertions = payload.get("assertions")
     if not isinstance(assertions, list):
         raise ValueError("Runner response must include assertions.")
+    preconditions_reached = payload.get("preconditionsReached")
+    supported_requirement = payload.get("supportedRequirement")
+    if not isinstance(preconditions_reached, bool) or not isinstance(
+        supported_requirement, bool
+    ):
+        raise ValueError("Runner response must include boolean precondition fields.")
+    parsed_assertions: list[AssertionObservation] = []
+    for assertion in assertions:
+        if not isinstance(assertion, dict):
+            raise ValueError("Runner assertions must be objects.")
+        expected = assertion.get("expected")
+        actual = assertion.get("actual")
+        passed = assertion.get("passed")
+        if (
+            not isinstance(expected, str)
+            or not isinstance(actual, str)
+            or not isinstance(passed, bool)
+        ):
+            raise ValueError("Runner assertion fields have invalid types.")
+        parsed_assertions.append(
+            AssertionObservation(expected=expected, actual=actual, passed=passed)
+        )
     return ReplaySample(
         replay_input=ReplayInput(
-            preconditions_reached=bool(payload.get("preconditionsReached")),
-            supported_requirement=bool(payload.get("supportedRequirement")),
-            assertions=tuple(
-                AssertionObservation(
-                    expected=str(assertion["expected"]),
-                    actual=str(assertion["actual"]),
-                    passed=bool(assertion["passed"]),
-                )
-                for assertion in assertions
-                if isinstance(assertion, dict)
-            ),
+            preconditions_reached=preconditions_reached,
+            supported_requirement=supported_requirement,
+            assertions=tuple(parsed_assertions),
             execution_error=(
                 str(payload["executionError"])
                 if payload.get("executionError") is not None
